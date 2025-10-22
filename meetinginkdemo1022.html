@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>舞雲智網 AI 知識管理與 Meeting Ink 應用</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: 本 SPA 採用垂直滾動的單頁佈局，頂部設有固定導覽列，使用者可依序瀏覽或直接跳轉至四大核心區塊：1. 前言（核心理念）、2. 痛點分析、3. 解決方案（DAO方法學）、4. Demo 轉場。此結構旨在將簡報的線性敘事流程轉化為互動體驗，透過視覺化數據與可點擊的流程圖，引導使用者從「為何需要」到「如何解決」，最終聚焦於產品本身，提升資訊吸收效率與參與感。 -->
+    <!-- Visualization & Content Choices: 
+        1. 核心數據 -> 目標: 突顯問題嚴重性 -> 呈現方式: 動態數字計數器 -> 互動: 滾動至可視區域時觸發動畫 -> 理由: 吸引使用者注意，強化數據衝擊力。
+        2. 四大痛點 -> 目標: 分類展示問題 -> 呈現方式: 圖標卡片網格 + Chart.js 圓餅圖 -> 互動: 卡片懸停效果 -> 理由: 網格佈局清晰對比，圓餅圖將「85% 知識流失」的關鍵數據視覺化，加深印象。
+        3. DAO 方法學 -> 目標: 解釋複雜流程 -> 呈現方式: HTML/CSS 構建的互動式步驟流程圖 -> 互動: 點擊步驟可展開/收合詳細內容 -> 理由: 將靜態表格轉化為動態流程，使用者可依序探索，降低認知負擔，比純文字更易理解。
+        4. Demo 轉場 -> 目標: 行動呼籲 -> 呈現方式: 簡潔的文字區塊與突出的按鈕樣式 -> 互動: 按鈕懸停效果 -> 理由: 明確指示簡報的下一步，引導使用者聚焦。
+        所有視覺元素均使用 HTML/CSS/Canvas 實現。 -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #292524; /* stone-800 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 300px;
+        }
+        .step-connector {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 4rem;
+            height: 2px;
+            background-color: #d6d3d1; /* stone-300 */
+        }
+        .step-item.active .step-icon {
+            background-color: #0d9488; /* teal-600 */
+            color: #ffffff;
+        }
+        .step-item.active .step-title {
+            color: #0d9488; /* teal-600 */
+        }
+        .step-details {
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .step-item.active .step-details {
+            max-height: 500px; /* Adjust as needed */
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="text-xl font-bold text-teal-600">5cloud Meeting Ink</div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#intro" class="text-stone-600 hover:text-teal-600 transition">核心理念</a>
+                <a href="#pain-points" class="text-stone-600 hover:text-teal-600 transition">會議痛點</a>
+                <a href="#solution" class="text-stone-600 hover:text-teal-600 transition">DAO 方法學</a>
+                <a href="#demo" class="text-stone-600 hover:text-teal-600 transition">實戰 Demo</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="intro" class="min-h-screen flex items-center bg-white">
+            <div class="container mx-auto px-6 py-16 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-stone-900 leading-tight">人才的 AI 轉型，從<span class="text-teal-600">「有感」</span>的會議開始</h1>
+                <p class="mt-6 text-lg md:text-xl text-stone-600 max-w-3xl mx-auto">
+                    讓 AI 不再是負擔，而是賦能者與得力助手。當員工親身體驗 AI 帶來的價值時，他們將會主動擁抱轉型，釋放前所未有的生產力。
+                </p>
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="bg-stone-100 p-8 rounded-lg shadow-md">
+                        <p class="text-2xl font-bold text-teal-600">時間浪費</p>
+                        <p class="mt-2 text-5xl font-bold text-stone-800"><span data-count="20">0</span>%</p>
+                        <p class="mt-2 text-stone-600">企業約 20% 的時間花在開會</p>
+                    </div>
+                    <div class="bg-stone-100 p-8 rounded-lg shadow-md">
+                        <p class="text-2xl font-bold text-teal-600">知識流失</p>
+                        <p class="mt-2 text-5xl font-bold text-stone-800"><span data-count="75">0</span>%</p>
+                        <p class="mt-2 text-stone-600">會議記錄遺漏 70-80% 的內容</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pain-points" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold">傳統會議紀錄的四大痛點</h2>
+                    <p class="mt-4 text-lg text-stone-600 max-w-2xl mx-auto">傳統會議模式讓寶貴的討論在會後快速流失，形成難以彌補的組織裂痕。</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                             <div class="flex items-center">
+                                <span class="text-3xl mr-4">📚</span>
+                                <h3 class="text-xl font-bold">知識無法積累</h3>
+                            </div>
+                            <p class="mt-2 text-stone-600">大量資訊依賴個人紀錄，最終流失，無法沈澱為組織資產，形成資訊孤島。</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            <div class="flex items-center">
+                                <span class="text-3xl mr-4">👥</span>
+                                <h3 class="text-xl font-bold">人力成本高</h3>
+                            </div>
+                            <p class="mt-2 text-stone-600">需指派專人進行紀錄與整理，不僅耗時，更容易因人為因素而出錯。</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                           <div class="flex items-center">
+                                <span class="text-3xl mr-4">⏳</span>
+                                <h3 class="text-xl font-bold">時效性差</h3>
+                            </div>
+                            <p class="mt-2 text-stone-600">重點難以即時掌握，常在需要時找不到關鍵資訊，錯過決策的黃金時機。</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            <div class="flex items-center">
+                                <span class="text-3xl mr-4">📉</span>
+                                <h3 class="text-xl font-bold">缺乏行動追蹤</h3>
+                            </div>
+                            <p class="mt-2 text-stone-600">會議產出的行動項目缺乏後續追蹤機制，導致決議無法落實，執行力不足。</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <h3 class="text-xl font-bold mb-4">一週後的知識留存率</h3>
+                        <div class="chart-container">
+                            <canvas id="knowledgeLossChart"></canvas>
+                        </div>
+                        <p class="mt-4 text-base text-stone-600">每次會議後，一週內將損失 <span class="font-bold text-red-600 text-lg">85%</span> 的實質性知識與討論脈絡。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solution" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold">5cloud 會議紀錄 DAO 方法學</h2>
+                    <p class="mt-4 text-lg text-stone-600 max-w-3xl mx-auto">
+                        我們導入以 AI 驅動的「Data-Analyze-Output」方法學，並以 Meeting Ink 為核心，將會議從成本中心轉化為組織的知識資產庫。
+                    </p>
+                </div>
+                <div id="dao-steps" class="flex flex-col md:flex-row justify-center items-start md:items-center space-y-8 md:space-y-0 md:space-x-8">
+                </div>
+            </div>
+        </section>
+
+        <section id="demo" class="py-20">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold">進入實戰：Meeting Ink Demo</h2>
+                <p class="mt-6 text-lg text-stone-600 max-w-3xl mx-auto">
+                    我們已經理解了理念與流程，現在，讓我們聚焦於最重要的執行工具 — Meeting Ink。它如何簡化即時紀錄，並實現自動化產出？接下來，將為您展示 Meeting Ink 的實際操作介面。
+                </p>
+                <div class="mt-10">
+                    <a href="#" class="bg-teal-600 text-white font-bold py-4 px-10 rounded-lg text-xl hover:bg-teal-700 transition-colors duration-300 shadow-lg">
+                        準備開始 Demo
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-stone-800 text-white py-6">
+        <div class="container mx-auto px-6 text-center text-sm text-stone-400">
+            &copy; 2025 5cloud Inc. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const observerOptions = {
+                root: null,
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        if (target.matches('[data-count]')) {
+                           animateCount(target);
+                        }
+                        observer.unobserve(target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('[data-count]').forEach(el => observer.observe(el));
+            
+            function animateCount(el) {
+                const target = parseInt(el.dataset.count, 10);
+                let current = 0;
+                const increment = target / 100;
+                const interval = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        el.textContent = target;
+                        clearInterval(interval);
+                    } else {
+                        el.textContent = Math.ceil(current);
+                    }
+                }, 20);
+            }
+
+            const ctx = document.getElementById('knowledgeLossChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['知識流失', '知識留存'],
+                    datasets: [{
+                        data: [85, 15],
+                        backgroundColor: ['#ef4444', '#14b8a6'],
+                        borderColor: ['#ffffff'],
+                        borderWidth: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                             labels: {
+                                font: {
+                                    size: 14,
+                                    family: "'Noto Sans TC', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const daoData = [
+                {
+                    step: 1,
+                    title: "會前準備",
+                    goal: "提升效率與資訊統一",
+                    details: [
+                        "<strong>會議通知：</strong> 使用 Google Calendar 發送邀請，並附上清晰議程，區分參與身份（必須/自由參加）。",
+                        "<strong>資料上傳：</strong> 各單位需提前將簡報上傳至指定的雲端資料夾，檔名需統一規範。",
+                        "<strong>自動通知：</strong> 會議開始前 30 分鐘，LINE 會自動推播提醒，確保與會人員準時到位。"
+                    ]
+                },
+                {
+                    step: 2,
+                    title: "會議進行",
+                    goal: "內容即時留存與追溯",
+                    details: [
+                        "<strong>即時紀錄工具：</strong> 鼓勵使用 Meeting Ink 進行錄製和即時翻譯，會後自動產出逐字稿與摘要。",
+                        "<strong>其他工具：</strong> 提及 Google Meet 錄影功能、手機內建錄音以及錄音筆等方式，確保內容被完整記錄。"
+                    ]
+                },
+                {
+                    step: 3,
+                    title: "會後紀錄",
+                    goal: "自動化產出與格式統一",
+                    details: [
+                        "<strong>自動生成：</strong> 若會議中啟用了 Meeting Ink，會後將自動產生逐字稿和摘要。",
+                        "<strong>GPT 協助：</strong> 提供一個客製化的 GPT 會議紀錄助手按鈕，可上傳逐字稿、摘要或簡報，自動產出符合規範的會議紀錄內容。",
+                        "<strong>存檔管理：</strong> 會議紀錄需存檔於指定的 Google Drive 路徑。"
+                    ]
+                },
+                {
+                    step: 4,
+                    title: "知識整理",
+                    goal: "將紀錄轉化為組織資產",
+                    details: [
+                        "<strong>知識萃取：</strong> 將逐字稿和摘要上傳至 NotebookLM。",
+                        "<strong>AI 分析應用：</strong> 利用 Google Drive + Gemini 或 NotebookLM 進行跨會議搜尋，提煉關鍵議題摘要、比較差異、提供行動建議或風險提醒。",
+                        "<strong>知識庫累積：</strong> 將知識成果歸檔至「部門知識庫」，並建立索引表（時間/部門/主題/連結），定期輸出知識累積報告，確保知識沈澱和再利用。"
+                    ]
+                }
+            ];
+
+            const stepsContainer = document.getElementById('dao-steps');
+            daoData.forEach((item, index) => {
+                const stepEl = document.createElement('div');
+                stepEl.className = 'step-item relative flex flex-col items-center w-full md:w-1/4 px-4';
+                stepEl.innerHTML = `
+                    <div class="step-header text-center cursor-pointer w-full">
+                        <div class="step-icon w-16 h-16 rounded-full bg-white shadow-md flex items-center justify-center text-2xl font-bold text-teal-600 border-2 border-stone-200 transition-colors duration-300">
+                            ${item.step}
+                        </div>
+                        <h3 class="step-title mt-4 text-xl font-bold transition-colors duration-300">${item.title}</h3>
+                        <p class="text-stone-500 text-sm">${item.goal}</p>
+                    </div>
+                    <div class="step-details w-full mt-4 bg-stone-50 p-4 rounded-lg border border-stone-200">
+                        <ul class="space-y-2 text-left text-sm text-stone-700">
+                            ${item.details.map(d => `<li>${d}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                
+                if (index < daoData.length - 1) {
+                    const connector = document.createElement('div');
+                    connector.className = 'step-connector hidden md:block';
+                    stepEl.appendChild(connector);
+                }
+
+                stepsContainer.appendChild(stepEl);
+
+                stepEl.querySelector('.step-header').addEventListener('click', () => {
+                    document.querySelectorAll('.step-item').forEach(el => {
+                        if (el !== stepEl) {
+                            el.classList.remove('active');
+                        }
+                    });
+                    stepEl.classList.toggle('active');
+                });
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
