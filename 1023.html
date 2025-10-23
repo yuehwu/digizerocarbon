@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>碩隆沖壓扣件製程升級轉型計畫 - 舞雲智網</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+TC:wght@100..900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
+            background-color: #f7f9fc;
+        }
+        .section-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .section-content.active {
+            display: block;
+            opacity: 1;
+        }
+        .kpi-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-4px);
+        }
+        .main-nav-button {
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header & Navigation -->
+    <header class="bg-indigo-700 shadow-lg sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-2xl font-extrabold text-white mb-2 md:mb-0">
+                碩隆轉型計畫
+                <span class="text-indigo-200 text-sm font-medium ml-2">| 舞雲智網輔導案例</span>
+            </h1>
+            
+            <!-- Navigation Tabs -->
+            <nav class="flex space-x-2 sm:space-x-4">
+                <button class="main-nav-button bg-white text-indigo-700 px-3 py-1.5 rounded-full text-sm font-semibold shadow-md active-tab" data-target="section-summary">
+                    專案概述
+                </button>
+                <button class="main-nav-button text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium" data-target="section-smart">
+                    智慧生產
+                </button>
+                <button class="main-nav-button text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium" data-target="section-lowcarbon">
+                    低碳能源
+                </button>
+                <button class="main-nav-button text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium" data-target="section-philosophy">
+                    轉型心法
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <!-- Section 1: 專案概述 (Project Summary) -->
+        <section id="section-summary" class="section-content active">
+            <h2 class="text-4xl font-bold text-indigo-800 mb-6 border-b-4 border-indigo-200 pb-2">「智慧化 + 低碳化」雙軸升級</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-10">
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-indigo-100">
+                    <h3 class="text-2xl font-semibold text-red-600 mb-3 flex items-center">
+                        <!-- SVG Icon for Problem -->
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        轉型痛點：資訊孤島效應
+                    </h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>設備無聯網能力：傳統沖壓設備無法即時回傳產能、異常或用電資訊。</li>
+                        <li>生產資訊斷鏈：缺乏 MES 系統，人工作業錯誤率高，生產履歷追溯困難。</li>
+                        <li>管理盲點：缺乏能源數據依據，難以精準判斷能耗與效率關聯性。</li>
+                        <li>結果：品質穩定性差、交期延遲、成本浮動。</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-indigo-100">
+                    <h3 class="text-2xl font-semibold text-green-600 mb-3 flex items-center">
+                        <!-- SVG Icon for Solution -->
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1v-3m0 0l-1.5-1.5M12 11V9m0 2h.01M12 11h2l2 2m-2-2v2m-2 2h2l2 2m-2-2v2"></path></svg>
+                        解決方案：雙軸整合策略
+                    </h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>智慧製造建置：導入機聯網 (IoT) + MES 整合系統。</li>
+                        <li>核心目標：實現即時稼動監控、電子報工與 100% 生產履歷追溯。</li>
+                        <li>能源管理優化：建置能源分析平台 (EMS)，佈建 26 個用電監測點。</li>
+                        <li>目標：進行電力趨勢分析，掌握能耗與產能關聯性。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Overall KPI Summary -->
+            <div class="bg-indigo-50 p-6 rounded-xl shadow-inner">
+                <h3 class="text-2xl font-bold text-indigo-700 mb-4 text-center">關鍵績效指標 (KPI) 達成概況</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="kpi-card bg-white p-4 rounded-xl text-center">
+                        <p class="text-sm text-gray-500">設備連網率</p>
+                        <p class="text-3xl font-extrabold text-indigo-600 mt-1">96.5<span class="text-xl">%</span></p>
+                        <p class="text-xs text-green-500">目標: 95% 以上</p>
+                    </div>
+                    <div class="kpi-card bg-white p-4 rounded-xl text-center">
+                        <p class="text-sm text-gray-500">數據收集完整率</p>
+                        <p class="text-3xl font-extrabold text-indigo-600 mt-1">98.5<span class="text-xl">%</span></p>
+                        <p class="text-xs text-green-500">目標: 98% 以上</p>
+                    </div>
+                    <div class="kpi-card bg-white p-4 rounded-xl text-center">
+                        <p class="text-sm text-gray-500">生產履歷追溯率</p>
+                        <p class="text-3xl font-extrabold text-indigo-600 mt-1">100<span class="text-xl">%</span></p>
+                        <p class="text-xs text-green-500">目標: 100%</p>
+                    </div>
+                    <div class="kpi-card bg-white p-4 rounded-xl text-center">
+                        <p class="text-sm text-gray-500">系統回應時間</p>
+                        <p class="text-3xl font-extrabold text-indigo-600 mt-1">3.5<span class="text-xl">秒</span></p>
+                        <p class="text-xs text-green-500">目標: 5秒以內</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Section 2: 智慧生產監控 (Smart Production Monitoring) -->
+        <section id="section-smart" class="section-content">
+            <h2 class="text-4xl font-bold text-indigo-800 mb-6 border-b-4 border-indigo-200 pb-2">智慧生產監控：從人工到即時決策</h2>
+            
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-2xl font-semibold text-indigo-700 mb-4 border-l-4 border-indigo-500 pl-3">I. 機聯網 + MES 整合 (智慧生產)</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="col-span-1 border-r border-gray-200 pr-4">
+                        <h4 class="font-bold text-lg text-indigo-600 mb-2">1.1 WIFI環境與IoT服務</h4>
+                        <p class="text-sm text-gray-600 mb-4">建置穩定的工廠無線網路環境，並透過 IoT 模組將沖床設備連接至資料平台，實現設備運轉狀態、產量與異常即時上傳。</p>
+                        <ul class="list-disc list-inside text-sm text-gray-700">
+                            <li>實現數位化生產資訊。</li>
+                            <li>設備連網率目標: 95% 以上。</li>
+                        </ul>
+                    </div>
+                    <div class="col-span-2">
+                        <h4 class="font-bold text-lg text-indigo-600 mb-2">1.2 MES生產監控系統服務 (電子報工與戰情室)</h4>
+                        <p class="text-sm text-gray-600 mb-4">導入 MES 系統監控各機台稼動率、生產進度與異常狀況，自動生成生產履歷與報表，提高生產透明度與管理效率。</p>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h5 class="font-bold text-base text-gray-700 mb-2">數位化介面模擬展示</h5>
+                            <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+                                <div class="bg-green-100 p-3 rounded-lg flex-1 text-center">
+                                    <p class="font-bold text-green-700">電子報工介面</p>
+                                    <p class="text-xs text-gray-500">即時回報製程移轉、生產數量、工時等。</p>
+                                    <div class="mt-2 text-3xl font-bold text-green-800">OK</div>
+                                </div>
+                                <div class="bg-blue-100 p-3 rounded-lg flex-1 text-center">
+                                    <p class="font-bold text-blue-700">戰情電子看板</p>
+                                    <p class="text-xs text-gray-500">掌握全廠稼動率、工單進度，異常紅燈警示。</p>
+                                    <div class="mt-2 text-3xl font-bold text-blue-800">稼動率</div>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded-lg flex-1 text-center">
+                                    <p class="font-bold text-yellow-700">生產履歷追溯</p>
+                                    <p class="text-xs text-gray-500">從原料到成品，實現 100% 追溯率。</p>
+                                    <div class="mt-2 text-3xl font-bold text-yellow-800">100%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: 智慧能源監控 (Smart Energy Monitoring) -->
+        <section id="section-lowcarbon" class="section-content">
+            <h2 class="text-4xl font-bold text-indigo-800 mb-6 border-b-4 border-indigo-200 pb-2">低碳智慧能源：從估算到精算</h2>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-2xl font-semibold text-indigo-700 mb-4 border-l-4 border-indigo-500 pl-3">II. 能源管理系統 (EMS) 與可視化</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-xl text-indigo-600 mb-3">2.1 佈建 26 個能源監測點</h4>
+                        <p class="text-gray-600 mb-4">透過於主要用電設備安裝電力感測器，記錄即時用電數據，作為節能分析基礎，將能源管理從「估算」升級為「精算」。</p>
+                        
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <p class="text-lg font-bold text-indigo-700 mb-2">總監測點數：<span class="text-4xl">26</span> 點</p>
+                            <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
+                                <p><span class="font-semibold">沖壓機區：</span>10 台</p>
+                                <p><span class="font-semibold">研磨機區：</span>7 台</p>
+                                <p><span class="font-semibold">攻牙機區：</span>6 台</p>
+                                <p><span class="font-semibold">空壓機區：</span>3 台</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-xl text-indigo-600 mb-3">2.2 能耗數據管理與可視化儀表板</h4>
+                        <p class="text-gray-600 mb-4">建立可視化儀表板，呈現班別/機台別的用電趨勢，並比對「能耗與產能效率」，實現精準管理。</p>
+
+                        <div class="bg-gray-800 p-4 rounded-lg text-white">
+                            <p class="text-sm font-semibold mb-2 text-green-400">當月能源數據模擬 (數據來自報告截圖)</p>
+                            <div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2">
+                                <p class="text-gray-400">累積用電度數 (kWh)</p>
+                                <p class="text-3xl font-bold text-green-500">3,622.178</p>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-gray-400">累積碳排放量 (kg CO₂e)</p>
+                                <p class="text-2xl font-bold text-red-400">1,535.803</p>
+                            </div>
+                            <p class="mt-2 text-xs text-gray-500">透過數據，管理者可精準找出最佳化的生產條件。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: 轉型心法 (Transformation Philosophy) -->
+        <section id="section-philosophy" class="section-content">
+            <h2 class="text-4xl font-bold text-indigo-800 mb-6 border-b-4 border-indigo-200 pb-2">舞雲智網提煉：四大轉型心法</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- 心法 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-xl border-t-4 border-red-500">
+                    <span class="text-4xl font-extrabold text-red-500 block mb-2">一</span>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900">真正的革命是 100% 「生產履歷」</h3>
+                    <p class="text-sm text-gray-600">轉型的核心不是新設備，而是建立從原料到成品的完整數據流。設定 100% 追溯率目標，在供應鏈中建立強大信任，大幅縮短品質分析時間。</p>
+                </div>
+
+                <!-- 心法 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-xl border-t-4 border-green-500">
+                    <span class="text-4xl font-extrabold text-green-500 block mb-2">二</span>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900">節能靠「能源監測點」非憑感覺</h3>
+                    <p class="text-sm text-gray-600">在廠內佈建多個監測點，讓能源管理從模糊的「估算」變成可驗證的「精算」。管理者可直觀比對能耗與產能效率，精準優化低碳生產條件。</p>
+                </div>
+
+                <!-- 心法 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-xl border-t-4 border-blue-500">
+                    <span class="text-4xl font-extrabold text-blue-500 block mb-2">三</span>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900">追求近乎苛求的「精準目標」</h3>
+                    <p class="text-sm text-gray-600">轉型計畫的成敗取決於清晰的 KPI。如：設備連網達 95% 以上、數據完整達 98% 以上、系統回應 5 秒以內。這些量化指標是企業邁入「即時決策」新境界的基石。</p>
+                </div>
+
+                <!-- 心法 4 -->
+                <div class="bg-white p-6 rounded-xl shadow-xl border-t-4 border-yellow-500">
+                    <span class="text-4xl font-extrabold text-yellow-500 block mb-2">四</span>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900">轉型非獨角戲，是「三方協力合奏」</h3>
+                    <p class="text-sm text-gray-600">中小企業轉型仰賴政府政策工具、企業自有資源和專業顧問（舞雲智網）的有效整合。三方協力，能以更低成本、更高確定性完成雙軸升級。</p>
+                </div>
+            </div>
+
+            <!-- Conclusion/Impact -->
+            <div class="mt-10 bg-indigo-50 p-6 rounded-xl text-center shadow-md">
+                <p class="text-2xl font-semibold text-indigo-800">從「製造」到「智造」</p>
+                <p class="mt-2 text-lg text-gray-700">碩隆案例證明，傳統產業的未來在於運用更聰明的數據，透過「智慧化+低碳化」雙軸升級，讓數據成為企業的第二條生命線。</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-200 text-gray-600 py-4 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            &copy; 2025 舞雲智網 (Wing Cloud Smart Network) 版權所有 | 碩隆精密工業輔導案例展示
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navButtons = document.querySelectorAll('.main-nav-button');
+            const sections = document.querySelectorAll('.section-content');
+
+            // Function to change tab
+            const changeSection = (targetId) => {
+                // Remove active state from all sections and buttons
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                navButtons.forEach(button => {
+                    button.classList.remove('bg-white', 'text-indigo-700', 'shadow-md');
+                    button.classList.add('text-white', 'hover:bg-indigo-600');
+                });
+
+                // Add active state to the target section and button
+                const targetSection = document.getElementById(targetId);
+                const targetButton = document.querySelector(`[data-target="${targetId}"]`);
+
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top for better view
+                }
+                
+                if (targetButton) {
+                    targetButton.classList.remove('text-white', 'hover:bg-indigo-600');
+                    targetButton.classList.add('bg-white', 'text-indigo-700', 'shadow-md');
+                }
+            };
+
+            // Event listener for navigation buttons
+            navButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const targetId = event.currentTarget.dataset.target;
+                    changeSection(targetId);
+                });
+            });
+
+            // Initialize: Show the first section
+            if (sections.length > 0) {
+                changeSection(navButtons[0].dataset.target);
+            }
+        });
+    </script>
+
+</body>
+</html>
