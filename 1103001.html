@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>甲桂林 AI 使用狀況分析報告</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 載入 Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <!-- 載入 Font Awesome for Icons (用於 AI 階段介紹) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 設定字體為 Inter 及 CJK 友好字體 */
+        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; }
+        /* 確保 Canvas 在小螢幕上有良好的響應性 */
+        .chart-container {
+            position: relative;
+            /* 調整預設高度以確保圖表有空間顯示 */
+            height: 350px; 
+            width: 100%;
+        }
+        @media (min-width: 640px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#102A43',
+                        'accent-orange': '#FFA500',
+                        'light-gray': '#F7F7F7',
+                        'success-green': '#3CB371',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-light-gray p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-primary-blue mb-2 border-b-4 border-accent-orange pb-2">
+                甲桂林 AI 使用狀況分析報告
+            </h1>
+            <p class="text-xl text-gray-600">總回覆數：<span class="font-bold">84</span> 則</p>
+        </header>
+
+        <!-- NEW PREAMBLE: AI 導入四階段介紹 (前言) -->
+        <div class="bg-primary-blue text-white p-6 rounded-xl shadow-2xl mb-8">
+            <h2 class="text-3xl font-extrabold mb-4 border-b-2 border-accent-orange pb-2">
+                AI 導入整體框架：四大階段
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-base">
+                <!-- 階段 1: 普及化階段 -->
+                <div class="bg-primary-blue/70 p-4 rounded-lg border border-success-green">
+                    <p class="font-extrabold text-xl md:text-2xl text-success-green mb-2 border-b border-success-green/50 pb-1">普及化階段</p>
+                    <ul class="list-disc ml-4 space-y-1">
+                        <li>建立 AI 轉型方向</li>
+                        <li>確保決策層戰略共識</li>
+                        <li>建立 AI 基礎認知，破除迷思</li>
+                        <li>全員掌握基礎 AI 工具</li>
+                    </ul>
+                </div>
+                <!-- 階段 2: 流程化階段 -->
+                <div class="bg-primary-blue/70 p-4 rounded-lg border border-accent-orange">
+                    <p class="font-extrabold text-xl md:text-2xl text-accent-orange mb-2 border-b border-accent-orange/50 pb-1">流程化階段</p>
+                    <ul class="list-disc ml-4 space-y-1">
+                        <li>盤點核心工作流程</li>
+                        <li>建立流程 AI 化藍圖</li>
+                        <li>實踐應用 AI 工具</li>
+                        <li>提高工作效率</li>
+                    </ul>
+                </div>
+                <!-- 階段 3: 制度化階段 -->
+                <div class="bg-primary-blue/70 p-4 rounded-lg border border-white">
+                    <p class="font-extrabold text-xl md:text-2xl text-white mb-2 border-b border-white/50 pb-1">制度化階段</p>
+                    <ul class="list-disc ml-4 space-y-1">
+                        <li>完善組織配套</li>
+                        <li>制定 SOP 與 KPI</li>
+                        <li>降低合規風險</li>
+                    </ul>
+                </div>
+                <!-- 階段 4: 系統化階段 -->
+                <div class="bg-primary-blue/70 p-4 rounded-lg border border-gray-400">
+                    <p class="font-extrabold text-xl md:text-2xl text-gray-400 mb-2 border-b border-gray-400/50 pb-1">系統化階段</p>
+                    <ul class="list-disc ml-4 space-y-1">
+                        <li>導入 RAG 框架</li>
+                        <li>規劃雲地端 LLM 部署</li>
+                        <li>進階應用</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- END NEW PREAMBLE: AI 導入四階段介紹 -->
+        
+        <!-- NEW PREAMBLE: 問卷說明 -->
+        <div class="bg-white p-4 rounded-xl shadow-inner mb-6 text-gray-700 border-l-4 border-accent-orange">
+            <!-- 文字說明放大 -->
+            <p class="text-lg leading-relaxed">
+                針對房地產代銷內部主要部門員工進行了一份課前問卷，共計蒐集 <span class="font-bold">84 份有效樣本</span>，目的是瞭解員工對 AI 工具的熟悉度、實際應用情境、現階段痛點與未來的使用願景。此次問卷以業務部為主體樣本來源，占整體回覆者高達 <span class="font-bold">78.6%</span>，因此整體趨勢亦高度反映一線營運與銷售端的真實工作需求與認知現況。
+            </p>
+        </div>
+        <!-- END NEW PREAMBLE -->
+
+        <!-- 部門分佈及 Q1: 了解程度 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- 總體資訊卡 (圓餅圖) -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-semibold text-primary-blue mb-4 border-b pb-2">部門分佈概覽</h2>
+                <div class="chart-container h-[350px] flex items-center justify-center">
+                    <canvas id="deptChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Q1: 了解程度 -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-semibold text-primary-blue mb-4 border-b pb-2">第一題：您目前對AI工具的了解程度</h2>
+                <div class="chart-container">
+                    <canvas id="q1Chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Q2: 使用過的AI工具 (保持全寬) -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold text-primary-blue mb-4 border-b pb-2">第二題：您目前主要使用過哪些AI工具</h2>
+            <div class="chart-container">
+                <canvas id="q2Chart"></canvas>
+            </div>
+            <!-- Q2 ANALYSIS - 文字說明放大 -->
+            <div class="mt-4 pt-3 border-t border-gray-100 text-gray-600">
+                <p class="text-lg leading-relaxed">
+                    整體來看，企業內有近九成的同仁已至少「偶爾使用」AI工具，顯示 AI 工具（特別是 ChatGPT 類型）已初步滲透至員工日常工作流程中。然而，從使用分布可見，ChatGPT 與 Gemini 為最主要的應用主流，而其他專業型工具（如 NotebookLM、Perplexity 等）的使用率仍相對有限，反映出目前應用仍集中於通用型語言模型。
+                </p>
+            </div>
+            <!-- END Q2 ANALYSIS -->
+        </div>
+
+        <!-- Q3: 應用場景 (全寬獨立區塊) -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold text-primary-blue mb-4 border-b pb-2">第三題：您目前在哪些工作上應用過 AI 工具？</h2>
+            <div class="chart-container">
+                <canvas id="q3Chart"></canvas>
+            </div>
+            <!-- Q3 ANALYSIS - 文字說明放大 -->
+            <div class="mt-4 pt-3 border-t border-gray-100 text-gray-600">
+                <p class="text-lg font-semibold mb-2">
+                    從同仁回覆分析，AI 工具目前主要應用場景高度集中於「文字產出任務」與「內容彙整輔助」兩大類型。
+                </p>
+                <p class="font-bold text-base mb-1 text-primary-blue">應用可分為兩大主軸：</p>
+                <ul class="list-disc ml-6 space-y-1 text-lg">
+                    <li><span class="font-medium">行銷文案/社群貼文撰寫：</span>主要涵蓋業務、企劃及數位行銷部門。AI 已被視為文字構思與初稿產出的重要助手，協助員工快速生成貼近品牌調性的內容。然而，挑戰在於如何從 AI 初稿進一步精煉，確保高品質與一致性。</li>
+                    <li><span class="font-medium">會議記錄與報告撰寫：</span>屬跨部門通用應用。員工多利用 AI 進行語音轉文字、摘要與格式整理，以提升行政與知識彙整效率。未來應聚焦於報告自動化與結構化知識輸出，如由會議記錄自動生成簡報或摘要。</li>
+                    
+                </ul>
+                <p class="text-lg mt-2">
+                    整體而言，AI 已能協助員工在效率與內容品質間取得平衡，但目前仍停留在「輔助型文書任務」階段。下一步應導向資料分析、決策支援與跨系統應用，以發揮企業級的 AI 價值。
+                </p>
+            </div>
+            <!-- END Q3 ANALYSIS -->
+        </div>
+
+        <!-- Q4: 工作痛點 (全寬獨立區塊) -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold text-primary-blue mb-4 border-b pb-2">第四題：您目前在工作上最常遇到的痛點是？</h2>
+            <div class="chart-container">
+                <canvas id="q4Chart"></canvas>
+            </div>
+             <!-- Q4 ANALYSIS - 文字說明放大 -->
+            <div class="mt-4 pt-3 border-t border-gray-100 text-gray-600">
+                <p class="text-lg leading-relaxed">
+  從回覆結果來看，員工的主要痛點集中於兩大方向：<strong>行政流程繁瑣</strong>與<strong>資訊統整困難</strong>，反映出企業在推動 AI 落地時，應優先從<strong>流程自動化</strong>與<strong>知識管理</strong>兩端著手。
+</p>
+
+<h3 class="mt-4 text-xl font-semibold text-primary-blue">一、效率殺手：重複性行政作業多（佔比最高）</h3>
+<p class="text-lg leading-relaxed">
+  多數部門（尤其業務與行銷單位）皆指出重複性行政作業耗時、占比過高，導致高價值任務被迫延後。
+</p>
+<p class="text-lg leading-relaxed">
+  這是一個典型的「流程化」前置問題——AI 導入的起點應從<strong>自動化報表</strong>、<strong>請款單填寫</strong>、<strong>資料初步整理</strong>與<strong>異常值標註</strong>等具體案例開始。
+</p>
+<p class="text-lg leading-relaxed font-medium mt-2">策略啟示：</p>
+<ul class="list-disc ml-6 space-y-1 text-lg">
+  <li>設計「行政作業自動化」示範案例。</li>
+  <li>協助員工辨識<strong>重複性、規則性高</strong>的工作並轉為可執行的 AI 提示或腳本。</li>
+  <li>讓員工在初期即感受實質減負，以激發後續轉型動能。</li>
+</ul>
+
+<h3 class="mt-6 text-xl font-semibold text-primary-blue">二、知識孤島：資訊難統整、舊資料難搜尋</h3>
+<p class="text-lg leading-relaxed">
+  第二大痛點為「資訊太多難整合」與「不易找到過往資料」，顯示企業內部欠缺有效的<strong>知識管理機制（KMS）</strong>，導致決策依據分散、重工頻繁，影響判斷品質與速度。
+</p>
+<p class="text-lg leading-relaxed font-medium mt-2">策略啟示：</p>
+<ul class="list-disc ml-6 space-y-1 text-lg">
+  <li>導入 <strong>RAG（檢索增強生成）</strong> 概念，結合內部專案文件與外部資料以強化檢索與分析。</li>
+  <li>運用 <strong>NotebookLM</strong> 進行文件比對與知識彙整，快速產出摘要／簡報。</li>
+  <li>培養「<strong>AI 驅動決策</strong>」的實務能力，讓資料轉化為可行洞見。</li>
+</ul>
+
+            </div>
+            <!-- END Q4 ANALYSIS -->
+        </div>
+        
+        <!-- Q5: 未來 AI 應用願景與創新潛力 - 文字說明放大 -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold text-primary-blue mb-4 border-b pb-2">五、未來 AI 應用願景與創新潛力</h2>
+            
+            <div class="overflow-x-auto mb-4">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-light-gray">
+                        <tr>
+                            <!-- 放大表頭文字 -->
+                            <th class="px-3 py-2 text-base font-medium text-gray-500 uppercase tracking-wider">員工期待任務方向（摘要）</th>
+                            <th class="px-3 py-2 text-base font-medium text-gray-500 uppercase tracking-wider">提及數</th>
+                        </tr>
+                    </thead>
+                    <!-- 表格內容文字放大 -->
+                    <tbody class="divide-y divide-gray-200 text-lg text-gray-700">
+                        <tr>
+                            <td class="px-3 py-2">希望 AI 協助處理行政流程與表單</td>
+                            <td class="px-3 py-2 font-medium text-accent-orange">高頻</td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2">希望 AI 整合並搜尋內部知識與舊資料</td>
+                            <td class="px-3 py-2 font-medium text-primary-blue">中頻</td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2">希望能生成提案簡報、PPT 內容</td>
+                            <td class="px-3 py-2 font-medium text-primary-blue">中頻</td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2">期待能建立客製化數據報告產生機制</td>
+                            <td class="px-3 py-2 font-medium text-success-green">中低頻</td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2">想讓 AI 主動提醒進度、任務或提問</td>
+                            <td class="px-3 py-2 font-medium text-gray-500">少數</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 文字說明放大 -->
+            <p class="text-lg text-gray-500 mt-2 mb-3">
+                雖然部分員工回答「尚無具體想法」、「無」，但整體而言，未來願景可濃縮為兩大核心需求：
+            </p>
+            <ul class="list-disc ml-6 space-y-1 text-lg text-primary-blue font-medium">
+                <li>主動整合資料與建議任務方向</li>
+                <li>實現一條龍行政與報告處理的自動化流程</li>
+            </ul>
+            <p class="text-lg mt-3 text-gray-600">
+                這些想法顯示出部分員工已有「AI 代理人」的雛形思維，值得作為企業 AI 進階發展策略的重要依據。
+            </p>
+        </div>
+        <!-- END Q5 VISION SECTION -->
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 修正圖表載入問題：使用 setTimeout 確保 DOM 渲染完成後再繪製
+            setTimeout(() => { 
+                const totalResponses = 84;
+                
+                // 設定圖表預設字體大小
+                Chart.defaults.font.size = 14;
+
+                // --- 1. 部門分佈概覽 (Pie Chart) ---
+                const deptData = [
+                    { name: '業務部', count: 66 },
+                    { name: '財務部', count: 5 },
+                    { name: '數位行銷', count: 4 },
+                    { name: '企劃', count: 4 },
+                    { name: '人資管理部', count: 2 },
+                    { name: '研展部', count: 2 },
+                    { name: '規劃部', count: 1 },
+                ];
+
+                const deptLabels = deptData.map(d => d.name);
+                const deptCounts = deptData.map(d => d.count);
+                const deptPercentages = deptData.map(d => ((d.count / totalResponses) * 100).toFixed(1));
+
+                const deptChartEl = document.getElementById('deptChart');
+                if (deptChartEl) {
+                    new Chart(deptChartEl, {
+                        type: 'doughnut',
+                        data: {
+                            labels: deptLabels,
+                            datasets: [{
+                                data: deptCounts,
+                                backgroundColor: [
+                                    '#102A43', // 業務部 (Primary Blue)
+                                    '#FFA500', // 財務部 (Accent Orange)
+                                    '#3CB371', // 數位行銷 (Success Green)
+                                    '#9333EA', // 企劃 (Purple)
+                                    '#EF4444', // 人資管理部 (Red)
+                                    '#3B82F6', // 研展部 (Blue)
+                                    '#9CA3AF', // 規劃部 (Gray)
+                                ],
+                                borderWidth: 2,
+                                borderColor: '#ffffff'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 10,
+                                        font: { size: 12 },
+                                        // 修正圖例顯示：包含部門名稱、人數和百分比
+                                        generateLabels: function(chart) {
+                                            const data = chart.data;
+                                            return data.labels.map((label, i) => ({
+                                                text: `${label} ${deptCounts[i]}人 (${deptPercentages[i]}%)`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                hidden: false,
+                                                index: i
+                                            }));
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.label}: ${context.raw}人 (${deptPercentages[context.dataIndex]}%)`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // --- 2. Q1: AI 工具的了解程度（修正後的數據） ---
+                const q1Labels = [
+                    '偶爾使用',
+                    '經常使用於工作',
+                    '聽過但沒用過',
+                    '參與部門導入',
+                ];
+                const q1Counts = [42, 34, 5, 3];
+                const q1Percentages = ['50', '40.5', '6', '3.6'];
+                
+                const q1ChartEl = document.getElementById('q1Chart');
+                if (q1ChartEl) {
+                    new Chart(q1ChartEl, {
+                        type: 'bar',
+                        data: {
+                            labels: q1Labels,
+                            datasets: [{
+                                label: '回覆人數',
+                                data: q1Counts,
+                                backgroundColor: ['#FFA500', '#102A43', '#3CB371', '#EF4444'], // 顏色匹配意圖
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            indexAxis: 'y', // 橫向長條圖
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    max: 50,
+                                    title: {
+                                        display: true,
+                                        text: '人數',
+                                        font: { size: 14 }
+                                    }
+                                },
+                                y: {
+                                    ticks: { font: { size: 12 } }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.raw}人 (${q1Percentages[context.dataIndex]}%)`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // --- 3. Q2: 使用過的AI工具 ---
+                const q2Labels = ['ChatGPT', 'Gemini', 'Perplexity', 'Grok', 'NotebookLM', 'Manus', '沒使用過'];
+                const q2Counts = [81, 34, 9, 7, 6, 2, 2];
+                const q2Percentages = q2Counts.map(c => ((c / totalResponses) * 100).toFixed(1));
+
+                const q2ChartEl = document.getElementById('q2Chart');
+                if (q2ChartEl) {
+                    new Chart(q2ChartEl, {
+                        type: 'bar',
+                        data: {
+                            labels: q2Labels,
+                            datasets: [{
+                                label: '回覆人數',
+                                data: q2Counts,
+                                backgroundColor: '#102A43',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            indexAxis: 'y', // 橫向長條圖
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    max: 85,
+                                    title: {
+                                        display: true,
+                                        text: '人數',
+                                        font: { size: 14 }
+                                    }
+                                },
+                                y: {
+                                    ticks: { font: { size: 12 } }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.raw}人 (${q2Percentages[context.dataIndex]}%)`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // --- 4. Q3: 應用場景 ---
+                const q3Labels = [
+                    '行銷文案/社群貼文撰寫',
+                    '會議記錄或報告撰寫',
+                    '部門作業標準化文件',
+                    '顧客意見統整',
+                    '尚未實際應用'
+                ];
+                const q3Counts = [52, 49, 11, 10, 9];
+                const q3Percentages = q3Counts.map(c => ((c / totalResponses) * 100).toFixed(1));
+
+                const q3ChartEl = document.getElementById('q3Chart');
+                if (q3ChartEl) {
+                    new Chart(q3ChartEl, {
+                        type: 'bar',
+                        data: {
+                            labels: q3Labels,
+                            datasets: [{
+                                label: '回覆人數',
+                                data: q3Counts,
+                                backgroundColor: '#FFA500',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            indexAxis: 'y', // 橫向長條圖
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: '人數',
+                                        font: { size: 16 }
+                                    }
+                                },
+                                y: {
+                                    ticks: { font: { size: 14 } }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.raw} 人 (${q3Percentages[context.dataIndex]}%)`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // --- 5. Q4: 工作痛點 ---
+                const q4Labels = [
+                    '重複性行政作業多',
+                    '資訊太多難統整',
+                    '不易找到過往資料',
+                    '文案產出慢',
+                    '無法掌握客戶反應'
+                ];
+                const q4Counts = [47, 40, 31, 29, 14];
+                const q4Percentages = q4Counts.map(c => ((c / totalResponses) * 100).toFixed(1));
+
+                const q4ChartEl = document.getElementById('q4Chart');
+                if (q4ChartEl) {
+                    new Chart(q4ChartEl, {
+                        type: 'bar',
+                        data: {
+                            labels: q4Labels,
+                            datasets: [{
+                                label: '回覆人數',
+                                data: q4Counts,
+                                // 調整顏色來強調痛點分類
+                                backgroundColor: ['#EF4444', '#3B82F6', '#3B82F6', '#FFA500', '#9CA3AF'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            indexAxis: 'y', // 橫向長條圖
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: '人數',
+                                        font: { size: 16 }
+                                    }
+                                },
+                                y: {
+                                    ticks: { font: { size: 14 } }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.raw} 人 (${q4Percentages[context.dataIndex]}%)`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }, 100); // 延遲 100 毫秒以確保佈局完成
+        });
+    </script>
+</body>
+</html>
