@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>甲桂林x舞雲智網_AI 賦能代銷流程</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Golden Harmony -->
+    <!-- Application Structure Plan: 本應用程式採用垂直滾動的單頁佈局，分為四大區塊：1. 核心概念介紹：以視覺化的方式呈現 DAO 心法。2. 互動式流程探索：將業務流程分部門呈現，避免資訊過載。3. 應用實例展示：新增案例介紹區塊，包含橫向的部門應用與縱向的個人能力分級，讓抽象概念具體化。4. 總結。此結構旨在引導使用者從理解概念、互動探索到看到實際案例，比線性閱讀報告更具吸引力與說服力。 -->
+    <!-- Visualization & Content Choices: 1. DAO 心法圖：Goal: 告知。Method: 使用 HTML/Tailwind 製作的三欄式卡片，代表 D-A-O，並非圖檔。Interaction: 無，純視覺呈現。Justification: 將抽象概念具象化，易於理解。2. 流程探索器：Goal: 組織資訊。Method: HTML 按鈕與 JS 內容切換。Interaction: 點擊按鈕顯示對應部門的痛點與 AI 解決方案。Justification: 將大量表格內容分類，化繁為簡，提升使用者探索意願。3. 個人能力表格：Goal: 組織資訊。Method: HTML 表格。Interaction: 無。Justification: 清晰呈現分級制度與對應獎勵，易於比較與理解。4. 案例卡片：Goal: 告知。Method: HTML 卡片。Interaction: 無。Justification: 以簡潔的方式介紹實際應用，提供實質參考。 -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto+Sans+TC', sans-serif;
+            background-color: #fdfaf6;
+            color: #44403c;
+        }
+        .nav-btn.active {
+            background-color: #f59e0b;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .content-card {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            will-change: opacity, transform;
+        }
+        .content-card.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            display: none;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        th {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            font-weight: 600;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+
+        <header class="text-center mb-12 md:mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-amber-900 tracking-tight">甲桂林x舞雲智網_AI 賦能代銷流程</h1>
+            <p class="mt-4 text-lg md:text-xl text-stone-600 max-w-3xl mx-auto">從流程優化到 DAO 組織轉型，探索數據驅動的未來</p>
+        </header>
+
+        <main>
+            <section id="dao-intro" class="mb-12 md:mb-20">
+                <h2 class="text-3xl font-bold text-center mb-4 text-amber-800">核心心法：DAO</h2>
+                <p class="text-center text-stone-600 mb-8 max-w-2xl mx-auto">一套從「提問」到「行動」的三階段思維框架，是啟動 AI 應用的鑰匙。</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-amber-100">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-amber-500 text-white rounded-full h-12 w-12 flex items-center justify-center text-2xl font-bold">D</div>
+                            <h3 class="ml-4 text-2xl font-bold text-stone-800">Data (問道)</h3>
+                        </div>
+                        <p class="text-stone-600">將您工作中的所有資料進行結構化與整理，從被動蒐集轉為主動提問，這是 AI 應用的第一步。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-amber-100">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-blue-500 text-white rounded-full h-12 w-12 flex items-center justify-center text-2xl font-bold">A</div>
+                            <h3 class="ml-4 text-2xl font-bold text-stone-800">Analyze (知道)</h3>
+                        </div>
+                        <p class="text-stone-600">利用 AI 進行多維度分析，挖掘數據背後隱藏的因果與深層邏輯，從中找出洞察。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-amber-100">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-emerald-500 text-white rounded-full h-12 w-12 flex items-center justify-center text-2xl font-bold">O</div>
+                            <h3 class="ml-4 text-2xl font-bold text-stone-800">Output (悟道)</h3>
+                        </div>
+                        <p class="text-stone-600">將洞察轉化為可執行的具體行動與產出，導入決策與自動化流程，真正創造商業價值。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="explorer" class="mb-12 md:mb-20 bg-amber-50 rounded-2xl p-6 md:p-10">
+                <h2 class="text-3xl font-bold text-center mb-2 text-amber-800">AI 應用流程探索</h2>
+                <p class="text-center text-stone-600 mb-8">選擇服務對象，點擊不同部門，了解各業務流程的痛點以及 AI 如何帶來改變。</p>
+                
+                <div class="flex justify-center mb-6 border-b-2 border-amber-200 pb-4">
+                    <div id="service-type-selector" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 bg-white p-2 rounded-xl shadow-inner">
+                        <button data-type="owner" class="service-btn nav-btn px-6 py-2 text-lg font-semibold text-stone-700 rounded-lg transition-all duration-300">對業主服務</button>
+                        <button data-type="customer" class="service-btn nav-btn px-6 py-2 text-lg font-semibold text-stone-700 rounded-lg transition-all duration-300">對客戶服務</button>
+                    </div>
+                </div>
+
+                <div id="department-selector-container" class="text-center mb-8 min-h-[4rem] transition-opacity duration-500">
+                </div>
+                
+                <div id="content-display" class="relative min-h-[20rem]">
+                </div>
+            </section>
+
+            <section id="case-studies" class="mb-12 md:mb-20">
+                <h2 class="text-3xl font-bold text-center mb-4 text-amber-800">舞雲智網x天來集團 AI 應用實例</h2>
+                <p class="text-center text-stone-600 mb-8 max-w-2xl mx-auto">AI 的應用不僅在於部門流程，也關乎個人能力的提升與組織文化的轉型。我們透過橫向與縱向的維度，全面推動 AI 導入。</p>
+
+                <div class="space-y-12">
+                    <!-- 横向案例 -->
+                    <div class="bg-amber-50 p-6 rounded-2xl shadow-lg border border-amber-100">
+                        <h3 class="text-2xl font-semibold text-amber-800 mb-4">橫向應用：部門協作與流程自動化</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-xl font-bold text-stone-700 mb-2">1. 會議紀錄流程</h4>
+                                <p class="text-stone-600">利用AI會議紀錄軟體meeting ink，在會議中自動錄製逐字稿。會後透過客製化的 GPT 模型，根據專業背景知識與固定格式，自動產出高品質的會議紀錄，大幅節省人力與時間。</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold text-stone-700 mb-2">2. 各式 GPT 應用</h4>
+                                <p class="text-stone-600">開發專屬GPT助理，應用於多個業務場景，例如：稅額比對小幫手、鈣鈦礦論壇新聞稿生成、工廠參訪指南等，打造更高效客製的AI應用。</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold text-stone-700 mb-2">3. CRM 客戶管理應用</h4>
+                                <p class="text-stone-600">透過CRM系統累積自動化蒐集客戶資料，並用AI進行智慧分群。當有新活動時，能夠根據客戶屬性精準推播行銷廣告，提升轉換率與客戶滿意度。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 纵向案例 -->
+                    <div class="bg-amber-50 p-6 rounded-2xl shadow-lg border border-amber-100">
+                        <h3 class="text-2xl font-semibold text-amber-800 mb-4">縱向應用： AI 推進團與個人能力分級</h3>
+                        <p class="text-stone-600 mb-4">我們相信 AI 的導入始於個人，因此建立了 AI 推進團與能力分級制度，透過獎勵鼓勵同仁主動學習與應用，將 AI 文化深植組織。</p>
+                        <div class="overflow-x-auto">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>等級</th><th>名稱</th><th>核心能力</th><th>主要行為</th><th>個人獎金</th><th>部門提撥</th><th>有效期</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Lv0</td><td>參與 Join</td><td>有興趣應用學習AI</td>
+                                        <td>加入AI推進團群組</td><td>-</td><td>-</td><td>3 個月</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lv1</td><td>熟悉 Familiarize</td><td>具備 AI 初步認知與操作</td>
+                                        <td>完成課程、參加週會</td><td>使用公司 AI 帳號</td><td>-</td><td>3個月</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lv2</td><td>使用 Utilize</td><td>能應用 AI 工具於工作</td>
+                                        <td>每週提交成果並說明效益</td><td>NT$1,000</td><td>NT$200</td><td>3個月</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lv3</td><td>驅動 Drive</td><td>推動部門導入與知識擴散</td>
+                                        <td>指導同仁並提出改善提案，協助團隊採用</td><td>NT$2,000</td><td>NT$400</td><td>3個月</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lv4</td><td>代理 Agent</td><td>建構 AI 工具流程</td>
+                                        <td>建立部門內可AI SOP 並穩定維運</td><td>NT$3,000</td><td>NT$600</td><td>6個月</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lv5</td><td>自駕 Autonomous</td><td>領導跨部門專案</td>
+                                        <td>領導AI導入專案、多部門協作，創造可量化營運績效</td><td>NT$5,000</td><td>NT$1,000</td><td>6個月</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="conclusion-survey" class="mb-12 md:mb-20 bg-amber-50 rounded-2xl p-6 md:p-10 text-center">
+                <h2 class="text-3xl font-bold text-center mb-4 text-amber-800">總結與行動：種下 AI 的種子</h2>
+                <p class="text-center text-stone-600 mb-6 max-w-2xl mx-auto">
+                    我們希望透過本次分享，能協助甲桂林的每一位同仁，無論是業務、企劃或行政人員，都能從 DAO 的精神應用到日常工作中。如同給各位釣竿，讓大家回到自己的工作流程中去釣魚，從微小的數據探索開始，啟動 AI 賦能的無限可能。
+                </p>
+                <p class="text-lg font-bold text-stone-700 mb-4">
+                    為了更深入了解您的需求，請協助填寫以下問卷。
+                </p>
+                <div class="flex flex-col items-center">
+                    <a href="https://forms.gle/zipJ1fK54mWYNzXo9" target="_blank" class="block w-full sm:w-auto px-8 py-3 mb-4 bg-amber-600 text-white font-bold rounded-lg shadow-md hover:bg-amber-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+                        前往填寫問卷
+                    </a>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?data=https%3A%2F%2Fforms.gle%2FzipJ1fK54mWYNzXo9&amp;size=200x200&amp;bgcolor=fdfaf6" alt="AI Survey QR Code" class="w-48 h-48 rounded-lg shadow-md border-2 border-stone-200">
+                    <p class="mt-2 text-sm text-stone-500">掃描 QR Code 或點擊上方連結</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const contentData = {
+            owner: {
+                '研展部': {
+                    painPoint: '評估區域行情，預測房價。',
+                    solution: {
+                        d: '自動化蒐集房價、人口結構、競品案場等市場數據。',
+                        a: 'AI 模型自動分析區域潛力、市場供給與需求，提供精準的市場趨勢預測。',
+                        o: '產出客製化的**市場分析報告**與**潛在客戶輪廓**，加速決策。'
+                    }
+                },
+                '規劃部': {
+                    painPoint: '評估坪數與空間設計，憑藉經驗判斷。',
+                    solution: {
+                        d: '輸入過去成功案例的數據，以及當前趨勢的設計元素。',
+                        a: 'AI 模擬不同坪數與格局的銷售表現，甚至提供**虛擬樣品屋**設計建議。',
+                        o: '生成多樣化的**設計提案**與**潛在銷售數據**，協助規劃部與業主高效溝通。'
+                    }
+                },
+                '業務部': {
+                    painPoint: '提案簡報、接待中心搭建、現場工程追蹤。',
+                    solution: {
+                        d: '將所有專案文件、工程進度、廠商報價等資料結構化。',
+                        a: 'AI 建立**知識管理系統**，智慧搜尋、分類、關聯各項專案資訊。',
+                        o: '業務副專可透過語音或文字快速查詢工程進度、歷史報價、廠商聯繫資訊，大幅提升專案管理效率，甚至由 AI 自動產生**進度追蹤報告**。'
+                    }
+                },
+                
+                '財務部': {
+                    painPoint: '專案預算以 Excel 根據經驗編列，資料分散且需人工統整，年度董事會時效率低落。',
+                    solution: {
+                        d: '透過 AI 自動化蒐集各專案的 Excel 預算表，將總銷、建置、企劃等各項費用數據化。',
+                        a: 'AI 分析不同專案預算與實際成本的差異，找出成本超支或優化的潛在機會。',
+                        o: '自動產出標準化、格式化的**年度成本表**，並提供視覺化報表供管理層快速決策。'
+                    }
+                }
+            },
+            customer: {
+                '行銷廣告': {
+                    painPoint: '廣告媒體投放多仰賴主管經驗。',
+                    solution: {
+                        d: '結合客戶數據、市場趨勢、過往廣告成效。',
+                        a: 'AI 分析數據，找出最有效的廣告平台與投放時機，甚至預測不同廣告素材的點擊率。',
+                        o: '產出**精準的媒體投放策略**，提高廣告投資回報率 (ROI)。'
+                    }
+                },
+                '客戶數據管理': {
+                    painPoint: '客資表、客況表以 Excel 管理，數據分散且難以即時分析。',
+                    solution: {
+                        d: '將所有客戶資料、賞屋紀錄、溝通內容**整合到統一的 CRM 系統**。',
+                        a: 'AI 分析客戶行為，如賞屋動線、問題類型、猶豫點，自動為客戶分群，並**預測潛在成交率**。',
+                        o: '業務可透過 **AI 智慧儀表板** 即時掌握所有客戶狀況，並由 AI 推薦下一步行動建議。'
+                    }
+                },
+                '接待中心日常': {
+                    painPoint: '工讀生每日紀錄來客數量與飲料種類。',
+                    solution: {
+                        d: '將每日來客數、飲料銷售、訪客停留時間等數據化。',
+                        a: 'AI 分析數據，預測每日來客高峰時段、客戶偏好的飲料類型，甚至推算出不同飲料的備料需求。',
+                        o: '產生**供應鏈管理報表**，幫助案場精準備貨，降低浪費。'
+                    }
+                }
+            }
+        };
+
+        let currentServiceType = 'owner';
+        let currentDepartment = Object.keys(contentData.owner)[0];
+
+        const serviceTypeSelector = document.getElementById('service-type-selector');
+        const departmentSelectorContainer = document.getElementById('department-selector-container');
+        const contentDisplay = document.getElementById('content-display');
+
+        function createContentCard(dept) {
+            const data = contentData[currentServiceType][dept];
+            if (!data) return '';
+            
+            return `
+                <div id="card-${dept.replace(/\s+/g, '-')}" class="content-card absolute w-full bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-amber-200">
+                    <h3 class="text-2xl font-bold text-stone-800 mb-4">${dept}</h3>
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-lg text-red-600 mb-2">現行流程與痛點</h4>
+                        <p class="text-stone-600">${data.painPoint}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-lg text-emerald-600 mb-3">DAO 賦能與 AI 應用機會</h4>
+                        <div class="space-y-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0 bg-amber-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold mr-3">D</div>
+                                <p class="text-stone-600 self-center">${data.solution.d.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-700">$1</strong>')}</p>
+                            </div>
+                             <div class="flex">
+                                <div class="flex-shrink-0 bg-blue-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold mr-3">A</div>
+                                <p class="text-stone-600 self-center">${data.solution.a.replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-700">$1</strong>')}</p>
+                            </div>
+                             <div class="flex">
+                                <div class="flex-shrink-0 bg-emerald-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold mr-3">O</div>
+                                <p class="text-stone-600 self-center">${data.solution.o.replace(/\*\*(.*?)\*\*/g, '<strong class="text-emerald-700">$1</strong>')}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function updateDepartmentSelector() {
+            const departments = Object.keys(contentData[currentServiceType]);
+            departmentSelectorContainer.innerHTML = `
+                <div class="flex flex-wrap justify-center gap-2 sm:gap-4">
+                    ${departments.map(dept => `<button data-dept="${dept}" class="dept-btn nav-btn px-4 py-2 text-base font-medium text-stone-600 rounded-lg transition-all duration-300 bg-white shadow-sm hover:shadow-md hover:bg-amber-100">${dept}</button>`).join('')}
+                </div>
+            `;
+            
+            contentDisplay.innerHTML = departments.map(dept => createContentCard(dept)).join('');
+            
+            document.querySelectorAll('.dept-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    currentDepartment = e.target.dataset.dept;
+                    updateActiveStates();
+                });
+            });
+        }
+        
+        function updateActiveStates() {
+            document.querySelectorAll('.service-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === currentServiceType);
+            });
+            document.querySelectorAll('.dept-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.dept === currentDepartment);
+            });
+            
+            document.querySelectorAll('.content-card').forEach(card => {
+                const cardId = `card-${currentDepartment.replace(/\s+/g, '-')}`;
+                if (card.id === cardId) {
+                     card.classList.remove('hidden');
+                } else {
+                     card.classList.add('hidden');
+                }
+            });
+        }
+
+        function init() {
+            serviceTypeSelector.addEventListener('click', (e) => {
+                if (e.target.classList.contains('service-btn')) {
+                    const newType = e.target.dataset.type;
+                    if(newType !== currentServiceType) {
+                        currentServiceType = newType;
+                        currentDepartment = Object.keys(contentData[currentServiceType])[0];
+                        updateDepartmentSelector();
+                        updateActiveStates();
+                    }
+                }
+            });
+            
+            updateDepartmentSelector();
+            updateActiveStates();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
