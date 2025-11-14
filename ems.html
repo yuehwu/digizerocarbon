@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式能源管理方案</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral & Tech Green (bg-neutral-50, text-neutral-800, accent-teal-700) -->
+    <!-- Application Structure Plan: SPA with a top navigation bar (Overview, Framework, Benefits, Process, Services) to re-architect the report into a user-driven journey. 'Framework' is the interactive centerpiece, 'Benefits' uses a chart for data, 'Process' uses an HTML timeline. This structure is chosen to answer a potential client's key questions ("What is it?", "How?", "Why?", "How?") more intuitively than a linear report. -->
+    <!-- Visualization & Content Choices: 1. Core Framework (Sec 2): Goal(Show process) -> HTML/Tailwind 4-quadrant interactive tabs (JS-driven show/hide). Justification(Makes the core concept explorable, not static). 2. Benefits (Sec 4): Goal(Visualize savings) -> Chart.js Horizontal Bar Chart (Canvas). Justification(Makes % savings data impactful). 3. Process (Sec 5): Goal(Show steps) -> HTML/Tailwind vertical timeline. Justification(Intuitive for a linear process). 4. Architecture (Sec 3): Goal(Show flow) -> HTML/Tailwind flexbox diagram with Unicode arrows. Justification(Replicates diagram without SVG). -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8f9fa; /* bg-neutral-50 (light gray) */
+        }
+        .nav-button {
+            @apply px-4 py-2 rounded-lg text-sm md:text-base font-medium text-neutral-600 transition-all duration-300;
+        }
+        .nav-button.active, .nav-button:hover {
+            @apply text-teal-700 bg-teal-100;
+        }
+        .content-section {
+            @apply p-4 md:p-8 bg-white rounded-2xl shadow-lg;
+        }
+        .framework-button {
+            @apply w-full p-4 md:p-6 rounded-xl text-left transition-all duration-300 shadow-md flex items-center;
+        }
+        .framework-button.active {
+            @apply bg-teal-700 text-white shadow-lg;
+        }
+        .framework-button:not(.active) {
+            @apply bg-white text-neutral-800 hover:bg-neutral-100 hover:shadow-lg;
+        }
+        .framework-icon {
+            @apply text-2xl md:text-3xl mr-4 flex-shrink-0 w-8 md:w-10 text-center;
+        }
+        .timeline-item {
+            @apply relative pl-10 py-2 border-l-2 border-teal-300;
+        }
+        .timeline-dot {
+            @apply absolute -left-3 top-4 w-5 h-5 bg-teal-600 rounded-full border-4 border-white;
+        }
+        .timeline-content {
+            @apply text-neutral-700;
+        }
+        .card {
+            @apply bg-white rounded-2xl shadow-xl p-6 md:p-8 transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1;
+        }
+    </style>
+</head>
+<body class="text-neutral-800">
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-white shadow-md">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl md:text-2xl font-bold text-teal-800">企業能源管理方案</h1>
+                </div>
+                <div class="hidden md:flex md:space-x-2">
+                    <button class="nav-button active" data-target="overview">方案概覽</button>
+                    <button class="nav-button" data-target="framework">核心架構</button>
+                    <button class="nav-button" data-target="benefits">導入效益</button>
+                    <button class="nav-button" data-target="process">執行流程</button>
+                    <button class="nav-button" data-target="models">合作模式</button>
+                </div>
+                <div class="md:hidden">
+                    <select id="mobile-nav" class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500">
+                        <option value="overview">方案概覽</option>
+                        <option value="framework">核心架構</option>
+                        <option value="benefits">導入效益</option>
+                        <option value="process">執行流程</option>
+                        <option value="models">合作模式</option>
+                    </select>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- Section 1: Overview (Default Visible) -->
+        <section id="overview" class="page-section content-section">
+            <h2 class="text-3xl font-bold text-teal-800 mb-4">方案概覽：打造可持續的能源未來</h2>
+            <p class="text-lg text-neutral-700 leading-relaxed mb-6">
+                本區塊將說明我們如何協助企業建立一套「可量化、可持續、可擴增」的能源管理系統。透過我們的專業方案，您不僅能顯著降低能源成本、提升使用效率，更能符合 ISO 50001 與淨零排放的未來趨勢。
+            </p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-teal-50 p-6 rounded-xl shadow-inner">
+                    <h3 class="text-xl font-semibold text-teal-700 mb-2">方案目標 (Our Goal)</h3>
+                    <p class="text-neutral-700">
+                        我們的目標是透過先進的能源監測、智慧化的設備改善與 AI 數據分析，為您的企業量身打造專屬的能源管理體系。這套體系不僅是為了節能，更是導入一套可複製、可持續的管理模式，協助企業從容應對未來的能源挑戰。
+                    </p>
+                </div>
+                <div class="bg-neutral-100 p-6 rounded-xl shadow-inner">
+                    <h3 class="text-xl font-semibold text-neutral-800 mb-2">核心價值 (Core Value)</h3>
+                    <p class="text-neutral-700">
+                        我們相信「專業 + 數據 + AI」的力量。本方案將協助您將能源管理從「一次性工程」轉變為「持續改善」的企業文化，確保您在淨零轉型與能源價格波動的浪潮中，始終保持競爭優勢。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Core Framework (Hidden) -->
+        <section id="framework" class="page-section content-section hidden">
+            <h2 class="text-3xl font-bold text-teal-800 mb-4">互動式核心架構</h2>
+            <p class="text-lg text-neutral-700 leading-relaxed mb-6">
+                我們的方案核心是一個完整的能源管理循環。請點擊下方四個階段，深入了解我們如何從數據收集到 AI 優化，為您打造閉環式的管理系統。
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Framework Navigation -->
+                <div class="flex flex-col space-y-4">
+                    <button class="framework-button active" data-tab="tab1">
+                        <span class="framework-icon">📊</span>
+                        <div>
+                            <h3 class="text-lg font-semibold">1. 能源數據建置與整合</h3>
+                            <p class="text-sm opacity-90">建立能源數據庫，奠定分析基礎。</p>
+                        </div>
+                    </button>
+                    <button class="framework-button" data-tab="tab2">
+                        <span class="framework-icon">🔍</span>
+                        <div>
+                            <h3 class="text-lg font-semibold">2. 能源分析與 SEU 辨識</h3>
+                            <p class="text-sm opacity-90">找出真正的能源浪費點與節能機會。</p>
+                        </div>
+                    </button>
+                    <button class="framework-button" data-tab="tab3">
+                        <span class="framework-icon">💡</span>
+                        <div>
+                            <h3 class="text-lg font-semibold">3. 節能改善建議與執行</h3>
+                            <p class="text-sm opacity-90">不只是設備改善，更是全面性管理。</p>
+                        </div>
+                    </button>
+                    <button class="framework-button" data-tab="tab4">
+                        <span class="framework-icon">🤖</span>
+                        <div>
+                            <h3 class="text-lg font-semibold">4. AI 能源管理與持續優化</h3>
+                            <p class="text-sm opacity-90">讓節能成為「持續改善」的過程。</p>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Framework Content Display -->
+                <div class="bg-neutral-100 p-6 rounded-xl shadow-inner min-h-[300px] md:min-h-[400px]">
+                    <div id="tab1" class="framework-content">
+                        <h4 class="text-xl font-bold text-neutral-800 mb-3">1. 能源數據建置與整合</h4>
+                        <ul class="list-disc pl-6 space-y-2 text-neutral-700">
+                            <li>建置電力、冰水、空調、空壓等能耗監測</li>
+                            <li>485、Wi-Fi、LoRa 等多種通訊整合</li>
+                            <li>設置 Gateway、資料收集器與能源管理平台</li>
+                            <li>佈建線路與通訊改善，確保數據穩定性</li>
+                            <li>導入 EMS / SCADA / Carbon Box 能源平台</li>
+                        </ul>
+                    </div>
+                    <div id="tab2" class="framework-content hidden">
+                        <h4 class="text-xl font-bold text-neutral-800 mb-3">2. 能源分析與重要能源用途辨識 (SEU)</h4>
+                        <ul class="list-disc pl-6 space-y-2 text-neutral-700">
+                            <li>進行能源審查與 SEU 辨識</li>
+                            <li>建立能源基準 (EnB) 與能源績效指標 (EnPI)</li>
+                            <li>計算各設備能效並找出高能耗設備</li>
+                            <li>進行關聯性分析 (產量、溫濕度、排程、負載)</li>
+                        </ul>
+                    </div>
+                    <div id="tab3" class="framework-content hidden">
+                        <h4 class="text-xl font-bold text-neutral-800 mb-3">3. 節能改善建議與專案執行</h4>
+                        <p class="text-neutral-700 mb-2">依據不同系統，提出具體改善措施：</p>
+                        <ul class="list-disc pl-6 space-y-1 text-neutral-700 text-sm">
+                            <li><b>空壓系統：</b>洩漏偵測、壓力最佳化、VSD 優化</li>
+                            <li><b>冰水系統：</b>泵浦改善、主機負載效率、kW/RT 管理</li>
+                            <li><b>空調系統：</b>排程最佳化、節能模式、溫濕度管理</li>
+                            <li><b>生產線：</b>
