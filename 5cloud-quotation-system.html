@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>舞雲智網 - 智能報價單系統</title>
+<!-- 載入 Tailwind CSS (樣式庫) --><script src="https://cdn.tailwindcss.com"></script>
+<!-- 載入 FontAwesome (圖示庫) --><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<!-- 載入 React 與 Babel (核心邏輯) --><script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+body {
+font-family: 'Noto Sans TC', sans-serif;
+}
+/* --- 全域印章樣式 --- */
+.signature-seal {
+width: 120px;
+height: auto;
+position: absolute;
+bottom: 0;
+left: 50%;
+transform: translateX(-50%);
+opacity: 0.9;
+z-index: 10;
+}
+/* --- 列印專用樣式 (極致單頁優化) --- */
+@media print {
+@page {
+size: A4;
+margin: 0; /* 清除瀏覽器預設頁面邊距 */
+}
+body {
+margin: 0;
+padding: 0;
+background: white;
+font-size: 9pt; 
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
+}
+.no-print {
+display: none !important;
+}
+/* 強制容器大小與行為 */
+.print-area {
+display: block !important;
+width: 210mm;
+height: 296mm;
+overflow: hidden; /* 強制隱藏溢出，確保單頁 */
+margin: 0 auto;
+page-break-after: avoid;
+position: relative;
+}
+/* 調整 A4 紙張內距 */
+.a4-paper {
+width: 100% !important;
+height: 100% !important;
+/* 邊界設定：上下 5mm，左右 10mm */
+padding: 5mm 10mm !important; 
+box-shadow: none !important;
+margin: 0 !important;
+display: flex !important;
+flex-direction: column !important;
+justify-content: space-between !important;
+}
+/* 壓縮各區塊間距 */
+.header-section { margin-bottom: 4mm !important; padding-bottom: 2mm !important; border-bottom-width: 2px !important; }
+.info-section { gap: 4mm !important; margin-bottom: 4mm !important; }
+.info-box { padding: 2mm !important; }
+.items-section { margin-bottom: 2mm !important; }
+.items-table th, .items-table td { padding-top: 1mm !important; padding-bottom: 1mm !important; }
+.footer-section { margin-top: auto !important; }
+.terms-box { padding: 2mm !important; margin-bottom: 4mm !important; }
+/* 避免頁尾分頁 */
+.footer-section { page-break-inside: avoid; }
+}
+/* --- 列印專用樣式 End --- */
+/* 螢幕顯示用的 A4 模擬 */
+.a4-paper {
+width: 210mm;
+min-height: 297mm;
+background: white;
+margin: 0 auto;
+box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+padding: 15mm;
+position: relative;
+display: flex;
+flex-direction: column;
+}
+</style>
+</head>
+<body class="bg-gray-100 text-gray-700">
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const QuotationSystem = () => {
+  // 預設資料
+  const [data, setData] = useState({
+    customerName: 'ABC股份有限公司',
+    customerTaxId: '12345678',
+    projectName: '碳定價管理流程輔導',
+    salesRep: '陳小明',
+    quotationDate: new Date().toISOString().split('T')[0],
+    validUntil: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    paymentTerms: '驗收後月結 30 天',
+    customRemarks: '',
+    items: [
+      {
+        id: '1',
+        description: '碳定價管理流程輔導\n(說明)',
+        unit: '人時',
+        quantity: 100,
+        unitPrice: 10000,
+        remark: '顧問服務'
+      }
+    ]
+  });
+
+  const [showPreview, setShowPreview] = useState(false);
+
+  // 設定表格最小列數，確保版面美觀
+  const MIN_ROWS = 12;
+
+  const handleChange = (field, value) => {
+    setData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleItemChange = (id, field, value) => {
+    const newItems = data.items.map(item => 
+      item.id === id ? { ...item, [field]: value } : item
+    );
+    setData(prev => ({ ...prev, items: newItems }));
+  };
+
+  const addItem = () => {
+    const newItem = {
+      id: Date.now().toString(),
+      description: '',
+      unit: '式',
+      quantity: 1,
+      unitPrice: 0,
+      remark: ''
+    };
+    setData(prev => ({ ...prev, items: [...prev.items, newItem] }));
+  };
+
+  const removeItem = (id) => {
+    setData(prev => ({ ...prev, items: prev.items.filter(item => item.id !== id) }));
+  };
+
+  const subtotal = data.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+  const tax = Math.round(subtotal * 0.05);
+  const total = subtotal + tax;
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <div className="min-h-screen pb-12">
+      {/* 頂部導航列 (列印時隱藏) */}
+      <div className="no-print bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-600 text-white w-8 h-8 rounded flex items-center justify-center">
+              <i className="fas fa-calculator"></i>
+            </div>
+            <h1 className="text-xl font-bold text-gray-800">智能報價單系統 <span className="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded ml-2">v7.5</span></h1>
+          </div>
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setShowPreview(!showPreview)}
+              className="lg:hidden px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition flex items-center gap-2"
+            >
+              <i className={`fas ${showPreview ? 'fa-edit' : 'fa-eye'}`}></i>
+              {showPreview ? '返回編輯' : '預覽'}
+            </button>
+            <button 
+              onClick={handlePrint}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2"
+            >
+              <i className="fas fa-print"></i>
+              下載 PDF / 列印
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* 左側：編輯區 (列印時隱藏) */}
+        <div className={`lg:col-span-4 space-y-6 no-print ${showPreview ? 'hidden' : 'block'}`}>
+          {/* 編輯表單內容 */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span className="w-1 h-5 bg-blue-500 rounded-full"></span>
+              客戶資訊
+            </h2>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">客戶名稱</label>
+                <input type="text" value={data.customerName} onChange={(e) => handleChange('customerName', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">統一編號</label>
+                <input type="text" value={data.customerTaxId} onChange={(e) => handleChange('customerTaxId', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">專案名稱</label>
+                <input type="text" value={data.projectName} onChange={(e) => handleChange('projectName', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase text-blue-600">經辦人員 (業務姓名)</label>
+                <input type="text" value={data.salesRep} onChange={(e) => handleChange('salesRep', e.target.value)} className="w-full px-3 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-blue-50" placeholder="請輸入業務姓名" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">報價日期</label>
+                  <input type="date" value={data.quotationDate} onChange={(e) => handleChange('quotationDate', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">有效期限</label>
+                  <input type="date" value={data.validUntil} onChange={(e) => handleChange('validUntil', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span className="w-1 h-5 bg-green-500 rounded-full"></span>
+              報價品項
+            </h2>
+            <div className="space-y-4">
+              {data.items.map((item, idx) => (
+                <div key={item.id} className="bg-gray-50 p-3 rounded-lg border border-gray-200 relative group">
+                  <button onClick={() => removeItem(item.id)} className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition" title="刪除此項目"><i className="fas fa-trash-alt text-xs"></i></button>
+                  <div className="space-y-2">
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 uppercase">品項描述 ({idx + 1})</label>
+                      <textarea rows="2" value={item.description} onChange={(e) => handleItemChange(item.id, 'description', e.target.value)} className="w-full mt-1 px-2 py-1 text-sm border border-gray-300 rounded focus:border-blue-500 outline-none" placeholder="請輸入產品描述..." />
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div><label className="text-xs font-bold text-gray-500 uppercase">單位</label><input type="text" value={item.unit} onChange={(e) => handleItemChange(item.id, 'unit', e.target.value)} className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:border-blue-500 outline-none" /></div>
+                      <div><label className="text-xs font-bold text-gray-500 uppercase">數量</label><input type="number" value={item.quantity} onChange={(e) => handleItemChange(item.id, 'quantity', Number(e.target.value))} className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:border-blue-500 outline-none" /></div>
+                      <div><label className="text-xs font-bold text-gray-500 uppercase">單價</label><input type="number" value={item.unitPrice} onChange={(e) => handleItemChange(item.id, 'unitPrice', Number(e.target.value))} className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:border-blue-500 outline-none" /></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button onClick={addItem} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 font-bold hover:border-blue-500 hover:text-blue-600 transition flex items-center justify-center gap-2"><i className="fas fa-plus"></i> 新增品項</button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span className="w-1 h-5 bg-yellow-500 rounded-full"></span>
+              條款與備註
+            </h2>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">付款條件</label>
+                <input type="text" value={data.paymentTerms} onChange={(e) => handleChange('paymentTerms', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase text-blue-600">其他備註 (選填)</label>
+                <textarea rows="3" value={data.customRemarks} onChange={(e) => handleChange('customRemarks', e.target.value)} className="w-full px-3 py-2 border border-blue-200 bg-blue-50 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" placeholder="請輸入其他補充說明..." />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 右側：A4 預覽區 */}
+        <div className={`lg:col-span-8 ${!showPreview ? 'hidden lg:block' : 'block'} print:block print:w-full`}>
+          <div className="print-area">
+            <div className="a4-paper">
+              {/* Header */}
+              <div className="header-section flex justify-between items-start mb-6 border-b-4 border-blue-800 pb-4">
+                <div>
+                  <div className="flex items-center gap-4 mb-1">
+                    {/* Logo 使用提供的 URL */}
+                    <img src="https://static.wixstatic.com/media/5a4746_677337268be946b684b4e6fa978680e9~mv2.png/v1/crop/x_0,y_0,w_328,h_178/fill/w_184,h_100,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/%E8%B3%87%E7%94%A2%201.png" alt="DigiZero Carbon Logo" className="w-32 h-auto object-contain" />
+                    <div>
+                      <h1 className="text-3xl font-black text-gray-800 leading-none">舞雲智網</h1>
+                      <p className="text-xs font-bold text-gray-500 tracking-widest uppercase mt-1">Digizero Carbon Co., Ltd.</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right text-sm text-gray-600 leading-relaxed">
+                  <p className="font-bold text-gray-800 text-2xl mb-1">報價單</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">QUOTATION</p>
+                  <p>統一編號：53789408</p>
+                  <p>地址：新竹縣竹北市復興三路二段76號</p>
+                  <p>電話：03-658-9760</p>
+                </div>
+              </div>
+
+              {/* Info Grid */}
+              <div className="info-section grid grid-cols-2 gap-4 mb-6 text-sm">
+                <div className="info-box bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <h3 className="text-blue-800 font-bold mb-2 border-b border-blue-200 pb-1">客戶資料 (Client Info)</h3>
+                  <table className="w-full text-left">
+                    <tbody>
+                      <tr><td className="text-gray-500 py-1 w-20 align-top">客戶名稱：</td><td className="font-bold text-gray-800">{data.customerName}</td></tr>
+                      <tr><td className="text-gray-500 py-1 align-top">統一編號：</td><td className="font-bold text-gray-800 font-mono">{data.customerTaxId}</td></tr>
+                      <tr><td className="text-gray-500 py-1 align-top">專案名稱：</td><td className="font-bold text-gray-800">{data.projectName}</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="info-box bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <h3 className="text-blue-800 font-bold mb-2 border-b border-blue-200 pb-1">單據資料 (Quotation Details)</h3>
+                  <table className="w-full text-left">
+                    <tbody>
+                      <tr><td className="text-gray-500 py-1 w-20">單據日期：</td><td className="font-bold text-gray-800 font-mono">{data.quotationDate}</td></tr>
+                      <tr><td className="text-gray-500 py-1">有效期限：</td><td className="font-bold text-gray-800 font-mono">{data.validUntil}</td></tr>
+                      <tr><td className="text-gray-500 py-1">經辦人員：</td><td className="font-bold text-gray-800">{data.salesRep}</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Items Table */}
+              <div className="items-section mb-4 flex-grow">
+                <table className="items-table w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="bg-blue-800 text-white">
+                      <th className="py-2 px-2 text-left w-10 rounded-tl-lg">#</th>
+                      <th className="py-2 px-2 text-left">品項名稱與規格 (Description)</th>
+                      <th className="py-2 px-2 text-center w-16">單位</th>
+                      <th className="py-2 px-2 text-right w-16">數量</th>
+                      <th className="py-2 px-2 text-right w-28">單價</th>
+                      <th className="py-2 px-2 text-right w-36 rounded-tr-lg">金額</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 border-b border-gray-200">
+                    {data.items.map((item, index) => (
+                      <tr key={item.id} className="hover:bg-gray-50">
+                        <td className="py-2 px-2 text-gray-500 text-center">{index + 1}</td>
+                        <td className="py-2 px-2">
+                          <div className="font-bold text-gray-800">{item.description.split('\n')[0]}</div>
+                          <div className="text-gray-500 text-xs whitespace-pre-line mt-1">{item.description.split('\n').slice(1).join('\n')}</div>
+                        </td>
+                        <td className="py-2 px-2 text-center">{item.unit}</td>
+                        <td className="py-2 px-2 text-right font-mono">{item.quantity}</td>
+                        <td className="py-2 px-2 text-right font-mono">{item.unitPrice.toLocaleString()}</td>
+                        <td className="py-2 px-2 text-right font-mono font-bold">{(item.quantity * item.unitPrice).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                    
+                    {/* 空白行填充邏輯 */}
+                    {Array.from({ length: Math.max(0, MIN_ROWS - data.items.length) }).map((_, i) => (
+                      <tr key={`empty-${i}`}>
+                        <td className="py-3 border-r border-dashed border-gray-100">{'\u00A0'}</td>
+                        <td className="border-r border-dashed border-gray-100"></td>
+                        <td className="border-r border-dashed border-gray-100"></td>
+                        <td className="border-r border-dashed border-gray-100"></td>
+                        <td className="border-r border-dashed border-gray-100"></td>
+                        <td></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  {/* Footer with Tax breakdown */}
+                  <tfoot>
+                    <tr>
+                      <td colSpan="4"></td>
+                      <td className="py-2 px-2 text-right text-gray-600 font-bold border-t border-gray-200 whitespace-nowrap">合計 (未稅)</td>
+                      <td className="py-2 px-2 text-right font-mono text-gray-800 border-t border-gray-200 whitespace-nowrap">NT$ {subtotal.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan="4"></td>
+                      <td className="py-2 px-2 text-right text-gray-600 font-bold whitespace-nowrap">營業稅 (5%)</td>
+                      <td className="py-2 px-2 text-right font-mono text-gray-800 whitespace-nowrap">NT$ {tax.toLocaleString()}</td>
+                    </tr>
+                    <tr className="bg-blue-50 border-t-2 border-blue-800">
+                      <td colSpan="4"></td>
+                      <td className="py-3 px-2 text-right text-blue-800 font-black text-lg whitespace-nowrap">總計 (含稅)</td>
+                      <td className="py-3 px-2 text-right font-mono text-blue-800 font-black text-xl whitespace-nowrap">NT$ {total.toLocaleString()}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              {/* Footer Section (Terms + Signature) */}
+              <div className="footer-section mt-auto">
+                <div className="terms-box bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm space-y-1 mb-6">
+                  <h4 className="font-bold text-gray-800 mb-1 text-xs uppercase tracking-wider border-b border-gray-200 pb-1">備註與條款 (Terms & Conditions)</h4>
+                  <p><span className="font-bold text-gray-600">1. 付款條件：</span> {data.paymentTerms}</p>
+                  <p><span className="font-bold text-gray-600">2. 匯款資訊：</span> 兆豐國際商業銀行(017) 新竹分行 | 帳號：203-09-06002-1 | 戶名：舞雲智網股份有限公司</p>
+                  <p><span className="font-bold text-gray-600">3. 有效期限：</span> 本報價單有效期限為 {data.validUntil}，逾期請重新詢價。</p>
+                  {data.customRemarks && (
+                    <p className="whitespace-pre-line"><span className="font-bold text-gray-600">4. 其他備註：</span> {data.customRemarks}</p>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-16 pb-2">
+                  <div className="text-center">
+                    <div className="h-16 border-b border-gray-400 mb-1"></div>
+                    <p className="text-gray-500 text-xs font-bold uppercase">客戶簽署</p>
+                  </div>
+                  <div className="text-center relative">
+                    <div className="h-16 border-b border-gray-400 mb-1 flex items-end justify-center pb-2 relative">
+                      <img src="image_83f0dd.png" alt="公司印章" className="signature-seal" onError={(e) => e.target.style.display = 'none'} />
+                    </div>
+                    <p className="text-gray-500 text-xs font-bold uppercase">舞雲智網</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<QuotationSystem />);
+</script>
+</body>
+</html>
