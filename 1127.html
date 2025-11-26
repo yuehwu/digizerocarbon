@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Ink + GPTs 會議紀錄與應用課程</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+            scroll-behavior: smooth;
+            /* 基礎字體加大到 22px，適合投影 */
+            font-size: 22px; 
+            line-height: 1.6;
+        }
+
+        .slide-section {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 2rem;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .highlight-text {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            background-color: #1e293b;
+            border-radius: 1.5rem; /* 加大圓角 */
+            padding: 2.5rem; /* 加大內距 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #334155;
+        }
+
+        .card-title {
+            font-size: 2rem; /* 加大標題 */
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .step-number {
+            font-size: 6rem; /* 數字加大 */
+            font-weight: 900;
+            color: #334155;
+            position: absolute;
+            top: -1.5rem;
+            right: 1.5rem;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        ul.check-list li {
+            position: relative;
+            padding-left: 2.5rem; /* 增加縮排 */
+            margin-bottom: 1rem;
+        }
+        ul.check-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        ul.cross-list li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        ul.cross-list li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #f87171;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Dots (加大尺寸) -->
+    <div class="fixed right-5 top-1/2 transform -translate-y-1/2 flex flex-col gap-6 z-50 hidden lg:flex">
+        <a href="#intro" class="w-4 h-4 rounded-full bg-slate-600 hover:bg-sky-400 transition-colors" title="首頁"></a>
+        <a href="#part1" class="w-4 h-4 rounded-full bg-slate-600 hover:bg-sky-400 transition-colors" title="Meeting Ink"></a>
+        <a href="#part2" class="w-4 h-4 rounded-full bg-slate-600 hover:bg-sky-400 transition-colors" title="為何需要ChatGPT"></a>
+        <a href="#part3" class="w-4 h-4 rounded-full bg-slate-600 hover:bg-sky-400 transition-colors" title="三層提示框架"></a>
+        <a href="#part4" class="w-4 h-4 rounded-full bg-slate-600 hover:bg-sky-400 transition-colors" title="客製化GPTs"></a>
+        <a href="#part5" class="w-4 h-4 rounded-full bg-slate-600 hover:bg-sky-400 transition-colors" title="Project功能"></a>
+    </div>
+
+    <!-- Intro Slide -->
+    <section id="intro" class="slide-section items-center text-center bg-gradient-to-b from-slate-900 to-slate-800">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl text-sky-400 font-bold mb-6 tracking-widest">AI 轉型工作坊</h2>
+            <h1 class="text-6xl md:text-8xl font-black mb-10 leading-tight">
+                Meeting Ink <span class="text-slate-400">+</span> <br>
+                <span class="highlight-text">GPTs 會議紀錄實戰</span>
+            </h1>
+            <p class="text-3xl text-slate-300 mb-16">
+                從精準轉錄到結構化產出的完整工作流
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="#part1" class="px-10 py-5 text-2xl bg-sky-600 hover:bg-sky-500 rounded-full font-bold transition-all shadow-lg shadow-sky-900/50 flex items-center gap-3">
+                    開始課程 <i data-lucide="arrow-down" class="w-8 h-8"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Part 1: Meeting Ink -->
+    <section id="part1" class="slide-section relative overflow-hidden">
+        <div class="absolute top-10 left-10 text-[10rem] font-black text-slate-800 pointer-events-none select-none">01</div>
+        <div class="max-w-7xl mx-auto w-full z-10">
+            <h2 class="text-5xl font-bold mb-16 flex items-center gap-4">
+                <i data-lucide="mic" class="text-sky-400 w-16 h-16"></i>
+                Meeting Ink：技術背景與功能
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-10">
+                <!-- Tech Background -->
+                <div class="card relative">
+                    <h3 class="card-title"><i data-lucide="cpu" class="w-10 h-10"></i> 技術來源與可信度</h3>
+                    <div class="space-y-6 text-slate-200 text-xl">
+                        <p>源自 <span class="font-bold text-white text-2xl">臺灣大學資訊工程系 多媒體資訊檢索實驗室</span>。</p>
+                        <p>核心技術：「讓電腦像人類一樣聽懂環境中的聲音」。</p>
+                        <div class="bg-slate-900/50 p-6 rounded-xl border border-slate-700">
+                            <h4 class="text-lg font-bold text-slate-400 mb-4">研究範圍</h4>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="px-4 py-2 bg-slate-700 rounded-full text-lg">聲音偵測</span>
+                                <span class="px-4 py-2 bg-slate-700 rounded-full text-lg">聲音分離</span>
+                                <span class="px-4 py-2 bg-slate-700 rounded-full text-lg">語音轉文字</span>
+                                <span class="px-4 py-2 bg-slate-700 rounded-full text-lg">聲紋辨識</span>
+                            </div>
+                        </div>
+                        <p class="text-xl italic text-sky-300 mt-4">並非一般軟體，而是研究型核心音訊技術的產品化。</p>
+                    </div>
+                </div>
+
+                <!-- Capabilities -->
+                <div class="card relative">
+                    <h3 class="card-title"><i data-lucide="zap" class="w-10 h-10"></i> 系統實戰能力</h3>
+                    <ul class="check-list space-y-4 text-2xl text-slate-200">
+                        <li><strong class="text-white">聲紋辨識：</strong>自動區分不同講者</li>
+                        <li><strong class="text-white">跨平台：</strong>線上會議、手機錄音皆可</li>
+                        <li><strong class="text-white">即時性：</strong>即時錄音 + 即時轉寫</li>
+                        <li><strong class="text-white">雙字幕：</strong>多語系即時翻譯</li>
+                        <li><strong class="text-white">高準確率：</strong>講者標註穩定</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-12 p-8 bg-amber-500/10 border-l-8 border-amber-500 rounded-r-xl">
+                <h4 class="text-2xl font-bold text-amber-400 mb-3 flex items-center gap-3">
+                    <i data-lucide="lightbulb" class="w-8 h-8"></i> 教學重點
+                </h4>
+                <p class="text-2xl">讓學員理解：「Meeting Ink 是 <span class="font-bold text-white">音訊轉文字與講者分離的最強工具之一</span>」，但它<span class="underline decoration-wavy decoration-red-400">不是最好的摘要工具</span>。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Part 2: Why ChatGPT is Needed -->
+    <section id="part2" class="slide-section relative overflow-hidden bg-slate-800/50">
+        <div class="absolute top-10 left-10 text-[10rem] font-black text-slate-800/50 pointer-events-none select-none">02</div>
+        <div class="max-w-7xl mx-auto w-full z-10">
+            <h2 class="text-5xl font-bold mb-6 flex items-center gap-4">
+                <i data-lucide="help-circle" class="text-sky-400 w-16 h-16"></i>
+                Meeting Ink 為何仍需 ChatGPT？
+            </h2>
+            <p class="text-3xl text-slate-400 mb-16">Meeting Ink 雖然內建 AI 摘要，但仍有先天限制。</p>
+
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="card border-t-8 border-t-red-500">
+                    <div class="text-red-400 mb-6"><i data-lucide="message-square-off" class="w-12 h-12"></i></div>
+                    <h3 class="text-2xl font-bold mb-4">語氣一致性不足</h3>
+                    <p class="text-slate-300 text-lg leading-snug">摘要偏向流水式，無法長期保持語氣、格式、段落一致。</p>
+                </div>
+                
+                <div class="card border-t-8 border-t-red-500">
+                    <div class="text-red-400 mb-6"><i data-lucide="sliders-horizontal" class="w-12 h-12"></i></div>
+                    <h3 class="text-2xl font-bold mb-4">無法客製化邏輯</h3>
+                    <p class="text-slate-300 text-lg leading-snug">無法做到品牌語氣、企業專有名詞對齊、部門格式模板。</p>
+                </div>
+
+                <div class="card border-t-8 border-t-red-500">
+                    <div class="text-red-400 mb-6"><i data-lucide="layers" class="w-12 h-12"></i></div>
+                    <h3 class="text-2xl font-bold mb-4">無法使用 S-C-T</h3>
+                    <p class="text-slate-300 text-lg leading-snug">只能生成單一輸出，無法依照 System-Context-Task 框架做精準產出。</p>
+                </div>
+
+                <div class="card border-t-8 border-t-red-500">
+                    <div class="text-red-400 mb-6"><i data-lucide="repeat" class="w-12 h-12"></i></div>
+                    <h3 class="text-2xl font-bold mb-4">缺乏迭代檢查</h3>
+                    <ul class="cross-list text-lg text-slate-300 mt-4 space-y-2">
+                        <li>不會自我檢查語氣</li>
+                        <li>無法三段式審查</li>
+                        <li>無法修改段落重組</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Part 3: S-C-T Framework -->
+    <section id="part3" class="slide-section relative overflow-hidden">
+        <div class="absolute top-10 left-10 text-[10rem] font-black text-slate-800 pointer-events-none select-none">03</div>
+        <div class="max-w-7xl mx-auto w-full z-10">
+            <h2 class="text-5xl font-bold mb-10 flex items-center gap-4">
+                <i data-lucide="box" class="text-sky-400 w-16 h-16"></i>
+                解決方案：三層提示框架 (S-C-T)
+            </h2>
+            
+            <div class="flex flex-col md:flex-row gap-10 items-start">
+                <!-- Instruction Panel -->
+                <div class="w-full md:w-1/3 space-y-6">
+                     <div class="bg-indigo-900/40 p-8 rounded-2xl border border-indigo-500/50">
+                        <h3 class="text-3xl font-bold text-indigo-300 mb-6">實作流程</h3>
+                        <ol class="list-decimal list-inside space-y-4 text-slate-200 text-xl">
+                            <li>下載雲端「會議逐字稿（模擬）」</li>
+                            <li>先用直覺問 ChatGPT (體驗品質不穩)</li>
+                            <li><span class="text-white font-bold bg-indigo-600 px-2 py-1 rounded">學習 S-C-T 框架</span></li>
+                            <li>應用新框架重新生成</li>
+                        </ol>
+                    </div>
+                    <p class="text-xl text-slate-400 italic px-4">
+                        "大家的問卷提到 AI 乎準乎不準、斷片、走鐘... 這是因為沒有好的框架。"
+                    </p>
+                </div>
+
+                <!-- Framework Visual -->
+                <div class="w-full md:w-2/3 grid gap-6">
+                    <!-- System Layer -->
+                    <div class="card border-l-[12px] border-l-blue-500 transform hover:scale-[1.02] transition-transform">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-3xl font-bold text-blue-400 mb-2">System Layer (系統層)</h3>
+                                <p class="text-xl text-slate-400 mb-3">角色與行為規範</p>
+                                <p class="text-slate-200 text-xl">決定 AI <strong>「怎麼說」</strong>。設定角色身份、語氣標準、品牌風格。</p>
+                            </div>
+                            <div class="bg-blue-500/20 p-3 rounded text-blue-300 font-mono text-base hidden xl:block">
+                                Long-term Identity
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Context Layer -->
+                    <div class="card border-l-[12px] border-l-green-500 transform hover:scale-[1.02] transition-transform">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-3xl font-bold text-green-400 mb-2">Context Layer (情境層)</h3>
+                                <p class="text-xl text-slate-400 mb-3">背景資訊與任務脈絡</p>
+                                <p class="text-slate-200 text-xl">告訴 AI <strong>「為什麼做」</strong>。提供資料來源(逐字稿)、受眾、目的。</p>
+                            </div>
+                            <div class="bg-green-500/20 p-3 rounded text-green-300 font-mono text-base hidden xl:block">
+                                Situation & Data
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task Layer -->
+                    <div class="card border-l-[12px] border-l-purple-500 transform hover:scale-[1.02] transition-transform">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-3xl font-bold text-purple-400 mb-2">Task Layer (任務層)</h3>
+                                <p class="text-xl text-slate-400 mb-3">具體輸出與格式要求</p>
+                                <p class="text-slate-200 text-xl">指定 AI <strong>「要做什麼」</strong>。設定格式(表格/摘要)、字數、產出條件。</p>
+                            </div>
+                            <div class="bg-purple-500/20 p-3 rounded text-purple-300 font-mono text-base hidden xl:block">
+                                Output Format
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Code Block for Practice -->
+            <div class="mt-10 bg-black/50 p-8 rounded-2xl border border-slate-700 font-mono text-xl text-slate-300 relative group leading-relaxed">
+                <div class="absolute top-4 right-4 text-base text-slate-500 border border-slate-700 px-3 py-1 rounded">練習模板</div>
+                <span class="text-blue-400 font-bold">System：</span>{在此放入角色、語氣、行為原則、限制}<br>
+                <span class="text-green-400 font-bold">Context：</span>{在此放入任務背景、受眾、目的、資料說明}<br>
+                <span class="text-purple-400 font-bold">Task：</span>{在此放入具體格式、字數、限制與產出要求}
+            </div>
+        </div>
+    </section>
+
+    <!-- Part 4: Customized GPTs -->
+    <section id="part4" class="slide-section relative overflow-hidden bg-slate-800/50">
+        <div class="absolute top-10 left-10 text-[10rem] font-black text-slate-800/50 pointer-events-none select-none">04</div>
+        <div class="max-w-7xl mx-auto w-full z-10">
+            <h2 class="text-5xl font-bold mb-10 flex items-center gap-4">
+                <i data-lucide="bot" class="text-sky-400 w-16 h-16"></i>
+                打造專屬會議紀錄助手 (GPTs)
+            </h2>
+
+            <div class="mb-14">
+                <h3 class="text-3xl font-bold mb-8 text-center text-white">GPTs 核心定位解析</h3>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="card text-center hover:bg-slate-700 transition-colors py-10">
+                        <div class="w-20 h-20 bg-lime-400 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-900">
+                            <i data-lucide="user-cog" class="w-10 h-10"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold mb-3 text-white">可客製化的 AI 分身</h4>
+                        <p class="text-lg text-slate-300">依照需求設定，模仿語氣、遵循規則，是您的個人化代理人。</p>
+                    </div>
+                    <div class="card text-center hover:bg-slate-700 transition-colors py-10">
+                        <div class="w-20 h-20 bg-lime-400 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-900">
+                            <i data-lucide="folder-open" class="w-10 h-10"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold mb-3 text-white">有限但精準的知識庫</h4>
+                        <p class="text-lg text-slate-300">適合儲存「精選參考資料」（如公司術語表），而非無限的大數據。</p>
+                    </div>
+                    <div class="card text-center hover:bg-slate-700 transition-colors py-10">
+                        <div class="w-20 h-20 bg-lime-400 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-900">
+                            <i data-lucide="settings-2" class="w-10 h-10"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold mb-3 text-white">規則驅動的運作模式</h4>
+                        <p class="text-lg text-slate-300">行為取決於指令。沒有明確規則，它就無法達到客製化效果。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 p-8 rounded-2xl border border-slate-700 flex flex-col md:flex-row gap-10">
+                <div class="flex-1">
+                    <h3 class="text-3xl font-bold text-sky-400 mb-6">實作步驟</h3>
+                    <ul class="space-y-6">
+                        <li class="flex items-start gap-4">
+                            <span class="bg-sky-600 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold flex-shrink-0 mt-1">1</span>
+                            <div>
+                                <strong class="text-2xl text-white">提示詞設計：</strong>
+                                <p class="text-slate-300 text-xl mt-1">使用「舞雲智網 GPT 提示詞設計師」，輸入 S-C-T 後產出完整 Prompt。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <span class="bg-sky-600 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold flex-shrink-0 mt-1">2</span>
+                            <div>
+                                <strong class="text-2xl text-white">知識庫建置：</strong>
+                                <p class="text-slate-300 text-xl mt-1">上傳公司專有名詞庫，讓 GPT 聽懂內部術語。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="md:w-1/3 bg-amber-900/20 p-6 rounded-xl border border-amber-600/30 flex items-center">
+                    <div>
+                        <div class="text-amber-500 font-bold mb-2 flex items-center gap-3 text-2xl">
+                            <i data-lucide="alert-triangle" class="w-8 h-8"></i> 關鍵提醒
+                        </div>
+                        <p class="text-lg text-amber-200 leading-relaxed">
+                            在 GPT 設定中請把 Web Browsing (聯網功能) 關掉，避免干擾，且確保能順利產出 Word 檔。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Part 5: ChatGPT Project Function -->
+    <section id="part5" class="slide-section relative overflow-hidden">
+        <div class="absolute top-10 left-10 text-[10rem] font-black text-slate-800 pointer-events-none select-none">05</div>
+        <div class="max-w-7xl mx-auto w-full z-10">
+            <h2 class="text-5xl font-bold mb-12 flex items-center gap-4">
+                <i data-lucide="folder-kanban" class="text-sky-400 w-16 h-16"></i>
+                ChatGPT Project 功能應用
+            </h2>
+
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="w-full md:w-1/2">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                        <div class="relative bg-slate-900 ring-1 ring-slate-900/5 rounded-xl leading-none flex items-top justify-start space-x-6 p-10">
+                            <div class="space-y-8 w-full">
+                                <h3 class="text-3xl font-bold text-white mb-4">進階工作流</h3>
+                                <div class="space-y-6">
+                                    <div class="flex items-center gap-6">
+                                        <div class="p-4 bg-slate-800 rounded-xl text-purple-400"><i data-lucide="at-sign" class="w-8 h-8"></i></div>
+                                        <div>
+                                            <p class="font-bold text-2xl text-white">Tag 客製化 GPT</p>
+                                            <p class="text-lg text-slate-400">在 Project 中直接召喚你的專屬會議助手。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-6">
+                                        <div class="p-4 bg-slate-800 rounded-xl text-purple-400"><i data-lucide="list-checks" class="w-8 h-8"></i></div>
+                                        <div>
+                                            <p class="font-bold text-2xl text-white">三階段審查</p>
+                                            <p class="text-lg text-slate-400">輸入審查標準，要求逐步修正。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-6">
+                                        <div class="p-4 bg-slate-800 rounded-xl text-purple-400"><i data-lucide="brain-circuit" class="w-8 h-8"></i></div>
+                                        <div>
+                                            <p class="font-bold text-2xl text-white">長期記憶</p>
+                                            <p class="text-lg text-slate-400">讓 Project 記住你的偏好與修正歷史。</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-6">
+                                        <div class="p-4 bg-slate-800 rounded-xl text-purple-400"><i data-lucide="file-text" class="w-8 h-8"></i></div>
+                                        <div>
+                                            <p class="font-bold text-2xl text-white">產出 Word 檔</p>
+                                            <p class="text-lg text-slate-400">直接生成可編輯文件，完成最後一哩路。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-1/2 text-center md:text-left">
+                    <h3 class="text-4xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+                        整合一切，高效產出
+                    </h3>
+                    <p class="text-2xl text-slate-300 leading-relaxed">
+                        利用 Project 功能作為<span class="text-white font-bold">總指揮中心</span>。
+                        <br><br>
+                        在這裡，您可以結合 <span class="text-sky-400">Meeting Ink 的精準逐字稿</span> 與 <span class="text-lime-400">客製化 GPT 的邏輯能力</span>，透過 Tag 功能串聯，實現最流暢的 AI 會議紀錄工作流。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 text-center text-slate-500 text-lg bg-slate-900 border-t border-slate-800">
+        <p>課程教材：Meeting Ink + GPTs 會議紀錄實戰</p>
+        <p class="mt-2">舞雲智網股份有限公司</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
